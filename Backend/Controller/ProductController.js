@@ -83,24 +83,6 @@ exports.getProductById = async (req, res) => {
     }
 } 
 
-exports.restockProduct = async (req, res) => {
-    try {
-        const { stock } = req.body;
-        if (!stock) {
-            return res.status(400).json({ message: "Stock value is required" });
-        }
-        const product = await Product.findOne({ sku: req.params.sku });
-        if (!product) {
-            return res.status(404).json({ message: "Product not found" });
-        }
-        product.stock+=Number(stock);
-        await product.save();
-        res.status(200).json({ message: "Product stock updated successfully", product });
-    }catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
 exports.updateProduct = async (req, res) => {
     try {
         const { name, description, price, category, threshold } = req.body;
@@ -134,15 +116,6 @@ exports.deleteProduct = async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
         res.status(200).json({ message: "Product deleted successfully", product });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-exports.getLowStockProducts = async (req, res) => {
-    try {
-        const lowStockProducts = await Product.find({ stock: { $lt: 5 } });
-        res.status(200).json({ lowStockProducts });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -189,18 +162,4 @@ exports.getProductsByCategory = async (req, res) => {
     }
 }
 
-exports.getTotalInventoryValue = async (req, res) => {
-    try {
-        const totalInventoryValue = await Product.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: { $multiply: ["$price", "$stock"] } }
-                }
-            }
-        ]);
-        res.status(200).json({ totalInventoryValue: totalInventoryValue[0]?.total || 0 });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+
