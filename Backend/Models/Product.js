@@ -21,9 +21,9 @@ const productSchema=new mongoose.Schema({
         type:Number,
         required:true
     },
-    AmountInStock:{
+    threshold:{
         type:Number,
-        required:true
+        default:5
     },
     image:{
         type:String,
