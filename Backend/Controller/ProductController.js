@@ -61,3 +61,146 @@ exports.createProduct = async (req, res) => {
     res.status(500).json({ message: "Error creating product" });
   }
 }
+
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.status(200).json({ products });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching products" });
+  }
+}
+
+exports.getProductById = async (req, res) => { 
+    try{
+        const product=await Product.findOne({ sku: req.params.sku })
+        if(!product){
+            return res.status(404).json({message:'Product not found'})
+        }
+        res.status(200).json({ product });
+    }catch(error){
+        res.status(500).json({message:error.message})
+    }
+} 
+
+exports.restockProduct = async (req, res) => {
+    try {
+        const { stock } = req.body;
+        if (!stock) {
+            return res.status(400).json({ message: "Stock value is required" });
+        }
+        const product = await Product.findOne({ sku: req.params.sku });
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        product.stock+=Number(stock);
+        await product.save();
+        res.status(200).json({ message: "Product stock updated successfully", product });
+    }catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.updateProduct = async (req, res) => {
+    try {
+        const { name, description, price, category, threshold } = req.body;
+        const product = await Product.findOne({ sku: req.params.sku });
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        Object.assign(product, { name, description, price, category, threshold });
+
+        await product.save();
+        res.status(200).json({ message: "Product updated successfully", product });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.getTotalProducts = async (req, res) => {
+    try {
+        const totalProducts = await Product.countDocuments();
+        res.status(200).json({ totalProducts });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const product = await Product.findOneAndDelete({ sku: req.params.sku });
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        res.status(200).json({ message: "Product deleted successfully", product });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.getLowStockProducts = async (req, res) => {
+    try {
+        const lowStockProducts = await Product.find({ stock: { $lt: 5 } });
+        res.status(200).json({ lowStockProducts });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.getAvailableProducts = async (req, res) => {
+    try {
+        const availableProducts = await Product.find({ available: true });
+        res.status(200).json({ availableProducts });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.getUnavailableProducts = async (req, res) => {
+    try {
+        const unavailableProducts = await Product.find({ available: false });
+        res.status(200).json({ unavailableProducts });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.updateProductAvailability = async (req, res) => {
+    try {
+        const product = await Product.findOne({ sku: req.params.sku });
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        product.available = !product.available;
+        await product.save();
+        res.status(200).json({ message: "Product availability updated successfully", product });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.getProductsByCategory = async (req, res) => {
+    try {
+        const products = await Product.find({ category: req.params.category });
+        res.status(200).json({ products });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.getTotalInventoryValue = async (req, res) => {
+    try {
+        const totalInventoryValue = await Product.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: { $multiply: ["$price", "$stock"] } }
+                }
+            }
+        ]);
+        res.status(200).json({ totalInventoryValue: totalInventoryValue[0]?.total || 0 });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
