@@ -49,6 +49,11 @@ exports.createProduct = async (req, res) => {
       image: result.secure_url
     });
 
+    const emailSubject = "New Product Added";
+    const emailBody = `A new product has been added to the inventory:\n\nName: ${name}\nDescription: ${description}\nPrice: ${price}\nStock: ${stock}\nCategory: ${category}`;
+
+    await sendMail(req.user.email, emailSubject, emailBody);
+
     res.status(201).json({ message: "Product created successfully", product: newProduct });
 
   } catch (error) {
