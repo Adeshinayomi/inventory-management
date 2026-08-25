@@ -24,4 +24,6 @@ route.put("/updateProductAvailability/:sku", authenticateToken, authorize(["owne
 route.get("/getProducts/:category", authenticateToken, ProductController.getProductsByCategory);
 
 route.delete("/deleteProduct/:sku", authenticateToken, authorize(["owner"]), ProductController.deleteProduct);
+
+
 module.exports = route;
