@@ -6,7 +6,6 @@ exports.createOrder = async (req, res) => {
   try {
     const { items, paymentMethod } = req.body;
 
-
     if (
       !items ||
       !Array.isArray(items) ||

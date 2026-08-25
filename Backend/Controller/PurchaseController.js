@@ -48,10 +48,8 @@ exports.createPurchase = async (req, res) => {
       purchasedBy: req.user.id
     });
 
-    // Increase product stock
     productExists.stock += Number(quantity);
 
-    // Product is available because it now has stock
     productExists.available = productExists.stock > 0;
 
     await productExists.save();

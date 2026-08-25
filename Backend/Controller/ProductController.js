@@ -3,6 +3,60 @@ const cloudinary = require("../Config/CloudinaryConfig.js");
 const sendMail = require("../Middleware/emailSender.js");
 const generateId = require("../Utils/generateId.js");
 
+exports.importDefaultProducts = async (req, res) => {
+  try {
+    const existingProducts = await Product.countDocuments();
+
+    if (existingProducts > 0) {
+      return res.status(400).json({
+        message: "Default products have already been imported"
+      });
+    }
+
+    const response = await fetch(
+      "https://dummyjson.com/products?limit=30"
+    );
+
+    if (!response.ok) {
+      return res.status(502).json({
+        message: "Failed to fetch products from external API"
+      });
+    }
+
+    const data = await response.json();
+
+    const products = data.products.map((product) => ({
+      name: product.title,
+      sku: generateId(product.title),
+      description: product.description,
+      price: Number(product.price),
+      stock: Number(product.stock),
+      category: product.category,
+      threshold: 5,
+      available: product.stock > 0,
+      image: product.thumbnail
+    }));
+
+    const savedProducts = await Product.insertMany(products);
+
+    res.status(201).json({
+      message: "Default products imported successfully",
+      count: savedProducts.length,
+      products: savedProducts
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error importing default products"
+    });
+  }
+
+};
+
+
+
 exports.createProduct = async (req, res) => {
   try {
     const { name, description, price, stock, category, threshold } = req.body;
@@ -134,20 +188,6 @@ exports.getUnavailableProducts = async (req, res) => {
     try {
         const unavailableProducts = await Product.find({ available: false });
         res.status(200).json({ unavailableProducts });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-exports.updateProductAvailability = async (req, res) => {
-    try {
-        const product = await Product.findOne({ sku: req.params.sku });
-        if (!product) {
-            return res.status(404).json({ message: "Product not found" });
-        }
-        product.available = !product.available;
-        await product.save();
-        res.status(200).json({ message: "Product availability updated successfully", product });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

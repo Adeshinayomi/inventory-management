@@ -5,7 +5,10 @@ const authenticateToken= require("../Middleware/Auth.js");
 const upload = require("../Middleware/uploadIMage.js");
 const authorize= require("../Middleware/role.js").authorize;
 
-route.post("/create-product", authenticateToken,authorize(["owner"]), upload.single("image"), ProductController.createProduct);
+route.post("/importProducts", authenticateToken,authorize(["owner"]), upload.single("image"), ProductController.importDefaultProducts);
+
+
+route.post("/createProduct", authenticateToken,authorize(["owner"]), upload.single("image"), ProductController.createProduct);
 
 route.get("/allProducts", authenticateToken, ProductController.getAllProducts);
 
@@ -18,8 +21,6 @@ route.get("/totalProducts", authenticateToken, ProductController.getTotalProduct
 route.get("/availableProducts", authenticateToken, ProductController.getAvailableProducts);
 
 route.get("/unavailableProducts", authenticateToken, ProductController.getUnavailableProducts);
-
-route.put("/updateProductAvailability/:sku", authenticateToken, authorize(["owner"]), ProductController.updateProductAvailability);
 
 route.get("/getProducts/:category", authenticateToken, ProductController.getProductsByCategory);
 
