@@ -10,7 +10,7 @@
 
   --color-surface: #ffffff;
   --color-surface-secondary: #f1f5f9;
-
+  /* --color-sidebar:#0F172A; */
 
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
@@ -41,7 +41,7 @@
   --color-info-light: #f0f9ff;
   --color-info-border: #bae6fd;
 
-  --color-input-background: #ffffff;
+  --color-input-background: #0a0808;
   --color-input-border: #cbd5e1;
   --color-input-placeholder: #94a3b8;
   --color-input-focus: #2563eb;
@@ -53,11 +53,12 @@
   --color-table-border: #e2e8f0;
 
 
-  --color-sidebar: #ffffff;
-  --color-sidebar-text: #475569;
-  --color-sidebar-text-active: #16a34a;
-  --color-sidebar-active: #f0fdf4;
-  --color-sidebar-border: #e2e8f0;
+
+  --color-sidebar: #0F172A;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-text-active: #3FAE2A;
+  --color-sidebar-active: #14532d;
+  --color-sidebar-border: #334155;
 
   --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.08);
 
@@ -76,7 +77,20 @@
 }
 
 @theme inline {
+   --color-primary:var(--color-primary);
+
   --color-background: var(--color-background);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted:var(--color-text-muted);
+  --color-text-on-primary:var(--color-text-on-primary);
+
+  --color-sidebar-text-active:var(--color-sidebar-text-active);
+  --color-sidebar-active: var(--color-sidebar-active);
+  --color-sidebar:var(--color-sidebar);
+  --color-sidebar-text:var(--color-sidebar-text);
+
   --font-inter: var(--font-inter-variable);
 }
 
@@ -113,4 +127,6 @@
   --color-primary-light: #14532d;
 }
 
-
+li{
+  cursor: pointer;
+}
