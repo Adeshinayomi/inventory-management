@@ -2,8 +2,6 @@ const Purchase = require("../Models/Purchase.js");
 const Product = require("../Models/Product.js");
 const generateId = require("../Utils/generateId.js");
 
-
-// CREATE PURCHASE / RESTOCK PRODUCT
 exports.createPurchase = async (req, res) => {
   try {
     const {
@@ -25,7 +23,6 @@ exports.createPurchase = async (req, res) => {
       });
     }
 
-    // Find the product
     const productExists = await Product.findById(product);
 
     if (!productExists) {
@@ -34,10 +31,8 @@ exports.createPurchase = async (req, res) => {
       });
     }
 
-    // Calculate total purchase cost
     const totalCost = Number(quantity) * Number(costPrice);
 
-    // Create purchase record
     const purchase = await Purchase.create({
       purchaseId: generateId("PUR"),
       product,

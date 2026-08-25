@@ -85,12 +85,12 @@ exports.createOrder = async (req, res) => {
 };
 
 
-// GET ALL ORDERS
+
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("items.product", "name sku price")
-      .populate("soldBy")
+      .populate("soldBy","name email")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -105,7 +105,6 @@ exports.getAllOrders = async (req, res) => {
 };
 
 
-// GET ORDER BY ID
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findOne({
@@ -160,7 +159,6 @@ exports.getTotalProductsSold = async (req, res) => {
 };
 
 
-// TOTAL SALES
 exports.getTotalSales = async (req, res) => {
   try {
     const result = await Order.aggregate([
@@ -186,7 +184,6 @@ exports.getTotalSales = async (req, res) => {
 };
 
 
-// TOTAL ORDERS
 exports.getTotalOrders = async (req, res) => {
   try {
     const totalOrders = await Order.countDocuments();
