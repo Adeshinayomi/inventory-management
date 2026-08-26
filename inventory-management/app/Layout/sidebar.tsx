@@ -2,7 +2,7 @@ import { LayoutDashboard,Warehouse,Box,ChartNoAxesCombined,Settings,LogOut} from
 
 export function Sidebar(){
     return(
-        <nav className="w-1/5 min-h-full fixed bg-sidebar p-5 grid gap-10 text-text-on-primary content-between">
+        <nav className="w-1/5 fixed min-h-screen bg-sidebar p-5 grid gap-10 text-text-on-primary content-between">
             <div className="grid gap-10">
                 <h1 className="text-xl font-medium">
                     <span className="text-primary">IN</span>VENTORY

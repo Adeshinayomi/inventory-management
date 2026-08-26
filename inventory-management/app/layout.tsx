@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Sidebar } from "./Layout/sidebar";
+import { Header } from "./Layout/header";
 import "./globals.css";
 
 const inter = Inter({
@@ -21,11 +22,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} h-full antialiased`}
     >
       <body className="bg-background font-inter min-h-full flex flex-col">
-      
-        <Sidebar />
+        <main className="flex">
 
-        {children}
-        
+          <Sidebar />
+
+          <section className="grid w-4/5 ml-auto">
+            <Header />
+
+            {children}
+          </section>
+
+        </main>
+
+
       </body>
     </html>
   );
