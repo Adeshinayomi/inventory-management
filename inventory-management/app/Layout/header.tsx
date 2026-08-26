@@ -3,8 +3,8 @@ export function Header(){
     return(
         <header className="px-5 w-full bg-surface border border-border py-4 flex justify-between">
             <div className="w-2/3 flex relative">
-                <Search size={20} className="text-text-muted absolute left-4 top-3"/>
-                <input type="search" placeholder="Search for products, orders, customers..." className="w-full bg-background border border-border rounded-full px-10"/>
+                <Search size={20} className="text-text-secondary absolute left-4 top-3"/>
+                <input type="search" placeholder="Search for products, orders, customers..." className="w-full bg-surface border border-border rounded-full px-10"/>
             </div>
 
             <div className="flex items-center gap-5">
