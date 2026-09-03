@@ -1,4 +1,5 @@
 import { StatsCard } from "./component/StatsCard";
+import { SalesTable } from "./component/SalesTable";
 import  TopSellingCategory from "./component/PieChart"
 import SalesChart from "./component/BarChart";
 
@@ -21,6 +22,10 @@ export default function Home() {
         <div className="w-full">
           <SalesChart />
         </div>
+      </div>
+
+      <div className="flex gap-2">
+        <SalesTable />
       </div>
     </section>
   );
