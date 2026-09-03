@@ -12,19 +12,19 @@ import {
 const categoryData = [
   {
     category: "Electronics",
-    sales: 420,
+    sales: 150,
   },
   {
     category: "Accessories",
-    sales: 280,
+    sales: 220,
   },
   {
     category: "Clothing",
-    sales: 190,
+    sales: 290,
   },
   {
     category: "Home Appliances",
-    sales: 150,
+    sales: 450,
   },
     {
     category: "others",
@@ -33,10 +33,10 @@ const categoryData = [
 ];
 
 const COLORS = [
-  "var(--chart-2)",
-  "var(--chart-1)",
-  "var(--chart-3)",
   "var(--chart-4)",
+  "var(--chart-3)",
+  "var(--chart-1)",
+  "var(--chart-2)",
   "var(--chart-5)",
 ];
 
@@ -94,6 +94,8 @@ export default function TopSellingCategory() {
                         <div className={`w-[${Number(percentage)}%] h-2 rounded-full`} style={{
                             backgroundColor:
                             COLORS[index % COLORS.length],
+                            
+                            width: `${percentage}%` 
                         }}></div>
                     </div>
                 </div>
@@ -102,8 +104,8 @@ export default function TopSellingCategory() {
           </div>
           {/* Chart */}
           <div className="relative h-[180px] w-[180px] shrink-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+            <ResponsiveContainer className="w-full h-full">
+              <PieChart className="w-full h-full">
                 <Pie
                   data={categoryData}
                   dataKey="sales"

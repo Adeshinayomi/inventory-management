@@ -4,6 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -36,8 +37,8 @@ export default function SalesChart() {
 
       <CardContent>
         <div className="h-[350px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
+          <ResponsiveContainer className="w-full h-full">
+            <BarChart className="w-full h-full"
               data={salesData}
               margin={{
                 top: 10,
@@ -73,12 +74,19 @@ export default function SalesChart() {
                 ]}
               />
 
-              <Bar
-                dataKey="sales"
-                fill="var(--color-primary)"
-                radius={[6, 6, 0, 0]}
-                barSize={32}
-              />
+              <Bar radius={[6,6,0,0]} dataKey="sales">
+                {salesData.map((entry) => (
+                  <Cell
+                    // border
+                    key={entry.month}
+                    fill={
+                      entry.month === "Apr" || entry.month === "Jun" || entry.month === "Jul"
+                        ? "var(--color-primary)"
+                        : "var(--color-surface-secondary)"
+                    }
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
