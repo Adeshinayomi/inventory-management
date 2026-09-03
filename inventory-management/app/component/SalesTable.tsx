@@ -1,4 +1,4 @@
-import {ChevronRight} from "lucide-react";
+import {ChevronRight,Briefcase} from "lucide-react";
 export function SalesTable() {
     const Sales= [
         {
@@ -59,14 +59,17 @@ export function SalesTable() {
             <tbody>
                 {Sales.map((sale) => (
                     <tr key={sale.id} className="border-b border-border">
-                        <td className="text-sm">#{sale.id}</td>
-                        <td className="text-sm">{sale.customer}</td>
-                        <td className="text-sm">{sale.date}</td>
-                        <td className="text-sm text-center">₦{sale.amount.toLocaleString()}</td>
-                        <td className={`text-center text-sm py-2 ${sale.status === "Completed" ? "text-green-500" : sale.status === "Cancelled" ? "text-red-500" : "text-yellow-500"}`}>
+                        <td className="text-sm py-4 flex items-center">
+                            <Briefcase size={30} className="inline-block mr-1 text-primary bg-primary/10 p-1 rounded-sm" />
+                            <span>#{sale.id}</span>
+                        </td>
+                        <td className="text-sm py-4">{sale.customer}</td>
+                        <td className="text-sm py-4">{sale.date}</td>
+                        <td className="text-sm text-center py-4">₦{sale.amount.toLocaleString()}</td>
+                        <td className={`text-center text-sm py-4 ${sale.status === "Completed" ? "text-green-500" : sale.status === "Cancelled" ? "text-red-500" : "text-yellow-500"}`}>
                             {sale.status}
                         </td>
-                        <td><ChevronRight size={16} className="inline-block ml-1 text-black" /></td>
+                        <td className="py-2"><ChevronRight size={16} className="inline-block ml-1 text-black" /></td>
                     </tr>
                 ))}
             </tbody>
