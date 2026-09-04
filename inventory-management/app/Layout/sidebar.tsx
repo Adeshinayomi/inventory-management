@@ -22,9 +22,9 @@ export function Sidebar(){
                         <Link href="/inventory" className="self-center text-white">Inventory</Link>
                     </li>
 
-                    <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/products" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                    <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/product" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
                         <Box size={20}/>
-                        <Link href="/products" className="self-center text-white">Products</Link>
+                        <Link href="/product" className="self-center text-white">Products</Link>
                     </li>
 
                     <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/sales" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
