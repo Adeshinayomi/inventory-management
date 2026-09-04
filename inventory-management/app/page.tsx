@@ -8,6 +8,12 @@ export default function Home() {
   const list=[1,2,3,4]
   return (
     <section className="grid gap-5 px-5 mt-8">
+      <div className="grid gap-2">
+        <h1 className="text-2xl font-bold">Welcome back, Bhadmus!</h1>
+        <p className="text-muted-foreground text-sm">
+          here is what is happening in your store today.
+        </p>
+      </div>
       <div className="flex justify-between">
         {list.map((index)=>{
           return(
