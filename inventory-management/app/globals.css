@@ -121,6 +121,8 @@
   --color-sidebar:var(--color-sidebar);
   --color-sidebar-text:var(--color-sidebar-text);
 
+  --color-danger:var(--color-danger);
+
   --font-inter: var(--font-inter-variable);
 
   --font-heading: var(--font-sans);
