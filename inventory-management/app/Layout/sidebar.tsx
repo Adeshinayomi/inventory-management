@@ -41,9 +41,9 @@ export function Sidebar(){
                     <Link href="/settings" className="self-center text-white">Settings</Link>
                 </li>
 
-                <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/logout" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                <li className='flex gap-2 px-3 py-2 rounded-md'>
                     <LogOut size={20}/>
-                    <Link href="/logout" className="self-center text-white">Logout</Link>
+                    <span className="self-center text-white">Logout</span>
                 </li>
             </ul>
         </nav>

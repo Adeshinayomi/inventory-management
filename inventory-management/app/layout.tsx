@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
 import { Sidebar } from "./Layout/sidebar";
 import { Header } from "./Layout/header";
+import { LogOut } from "./Layout/LogOut";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
           <section className="grid w-4/5 ml-auto">
             <Header />
+            <LogOut />
 
             {children}
           </section>
