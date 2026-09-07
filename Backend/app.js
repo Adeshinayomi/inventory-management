@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const cors = require("cors")
 dotenv.config();
 const connectDB = require("./Config/DatabaseConfig");
 const userRoute = require("./Routes/UserRoute.js");
@@ -10,6 +11,7 @@ const OrderRoute=require('./Routes/OrderRoute.js')
 const PurchaseRoute=require('./Routes/PurchaseRoute.js')
 
 app.use(express.json());
+app.use(cors())
 app.use('/users', userRoute);
 app.use('/products', productRoute);
 app.use('/inventory', inventoryRoute);
