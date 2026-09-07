@@ -1,6 +1,14 @@
 'use client'
 import {LogOutIcon} from 'lucide-react'
+import { useRouter } from 'next/navigation'
 export function LogOut({isModalOpen,setIsModalOpen}:{isModalOpen:boolean,setIsModalOpen:React.Dispatch<React.SetStateAction<boolean>>}){
+    const router = useRouter()
+
+    function handleLogout(){
+        localStorage.removeItem('inventory-token')
+        localStorage.removeItem('inventory-user')
+        router.replace('/login')
+    }
     return(
         <div className={`${isModalOpen?"":"hidden"} fixed top-0 right-0 w-full min-h-screen grid justify-center items-center bg-black/50 z-99`}>
             <div className="px-5 py-4 bg-surface rounded-md grid gap-5 ">
@@ -13,7 +21,7 @@ export function LogOut({isModalOpen,setIsModalOpen}:{isModalOpen:boolean,setIsMo
                             setIsModalOpen((prev)=>!prev)
                         }
                     }>Cancel</button>
-                    <button className='px-5 py-2 border border-border rounded-md font-medium bg-danger text-surface'>Log out</button>
+                    <button className='px-5 py-2 border border-border rounded-md font-medium bg-danger text-surface' onClick={handleLogout}>Log out</button>
                 </div>
             </div>
         </div>

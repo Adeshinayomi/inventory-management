@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
-import { Sidebar } from "./Layout/sidebar";
-import { Header } from "./Layout/header";
+import { AppShell } from "./Layout/app-shell";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -25,18 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn("h-full", "antialiased", inter.variable, "font-sans", geist.variable)}
     >
       <body className="bg-background font-inter min-h-full flex flex-col">
-        <main className="flex">
-
-          <Sidebar />
-
-          <section className="grid w-4/5 ml-auto">
-            <Header />
-            {children}
-          </section>
-
-        </main>
-
-
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
