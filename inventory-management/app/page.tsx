@@ -1,11 +1,29 @@
+"use client"
 import { StatsCard } from "./component/StatsCard";
 import { SalesTable } from "./component/SalesTable";
 import { LowStocks } from "./component/LowStocks";
 import  TopSellingCategory from "./component/PieChart"
 import SalesChart from "./component/BarChart";
+import { useState, useEffect } from "react";
+import { getDashboardStats } from "@/lib/prouduct";
 
 export default function Home() {
-  const list=[1,2,3,4]
+  const [dashboardStats, setDashboardStats] = useState({})
+
+  useEffect(()=>{
+    async function getStats() {
+      try {
+        const data = await getDashboardStats();
+
+        setDashboardStats(data);
+      } catch (error) {
+        console.error("Failed to fetch total products:", error);
+      }
+    }
+
+    getStats()
+  },[])
+  
   return (
     <section className="grid gap-5 px-5 mt-8">
       <div className="grid gap-2">
@@ -15,9 +33,9 @@ export default function Home() {
         </p>
       </div>
       <div className="flex justify-between">
-        {list.map((index)=>{
+        {Object.entries(dashboardStats).map(([key,value])=>{
           return(
-            <StatsCard key={index}/>
+            <StatsCard key={key} stat={key} value={value}/>
           )
         })}
       </div>
