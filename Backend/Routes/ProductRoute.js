@@ -19,7 +19,7 @@ route.put("/updateProduct/:sku", authenticateToken, authorize(["owner"]), Produc
 route.get("/totalProducts", authenticateToken, ProductController.getTotalProducts);
 
 route.get("/availableProducts", authenticateToken, ProductController.getAvailableProducts);
-
+route.get("/dashboard-stats", authenticateToken, ProductController.getDashboardStats);
 route.get("/unavailableProducts", authenticateToken, ProductController.getUnavailableProducts);
 
 route.get("/getProducts/:category", authenticateToken, ProductController.getProductsByCategory);

@@ -72,7 +72,7 @@ exports.createProduct = async (req, res) => {
     const result = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
             {
-                folder: "Inventory-Products",
+                folder: "Product-Products",
             },
             (error, result) => {
                 if (error) {
@@ -104,7 +104,7 @@ exports.createProduct = async (req, res) => {
     });
 
     const emailSubject = "New Product Added";
-    const emailBody = `A new product has been added to the inventory:\n\nName: ${name}\nDescription: ${description}\nPrice: ${price}\nStock: ${stock}\nCategory: ${category}`;
+    const emailBody = `A new product has been added to the Product:\n\nName: ${name}\nDescription: ${description}\nPrice: ${price}\nStock: ${stock}\nCategory: ${category}`;
 
     await sendMail(req.user.email, emailSubject, emailBody);
 
@@ -203,3 +203,45 @@ exports.getProductsByCategory = async (req, res) => {
 }
 
 
+exports.getDashboardStats = async (req,res)=>{
+  try{
+
+    const lowStocks = await Product.find({
+          $expr: {
+              $lte: ["$stock", "$threshold"]
+          }
+    }).countDocuments();
+    const totalProducts = await Product.countDocuments();
+    const totalRevenue = await Product.aggregate([
+        {
+            $group: {
+                _id: null,
+                totalProductValue: {
+                    $sum: {
+                        $multiply: ["$price", "$stock"]
+                    }
+                }
+            }
+        }
+    ]);
+    const totalUnit = await Product.aggregate([
+        {
+            $group: {
+                _id: null,
+                totalStock: {
+                    $sum: "$stock"
+                }
+            }
+        }
+    ]);
+    
+    res.status(200).json({
+      totalProducts,
+      totalUnit:totalUnit[0]?.totalStock || 0,
+      lowStocks,
+      totalRevenue: totalRevenue[0]?.totalProductValue || 0
+    })
+  }catch(error){
+    res.status(500).json({message:error.message})
+  }
+}
