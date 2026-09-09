@@ -5,24 +5,21 @@ import { LowStocks } from "./component/LowStocks";
 import  TopSellingCategory from "./component/PieChart"
 import SalesChart from "./component/BarChart";
 import { useState, useEffect } from "react";
-import { getDashboardStats } from "@/lib/prouduct";
+import { getDashboardStats, type DashboardStats } from "@/lib/prouduct";
 
 export default function Home() {
-  const [dashboardStats, setDashboardStats] = useState({})
 
-  useEffect(()=>{
-    async function getStats() {
-      try {
-        const data = await getDashboardStats();
+  const [stats, setStats] = useState<DashboardStats>({
+    totalProducts: 0,
+    totalUnit: 0,
+    lowStocks: 0,
+    totalRevenue: 0
+  });
 
-        setDashboardStats(data);
-      } catch (error) {
-        console.error("Failed to fetch total products:", error);
-      }
-    }
+  useEffect(() => {
+    getDashboardStats().then(setStats).catch(console.error);
+  }, []);
 
-    getStats()
-  },[])
   
   return (
     <section className="grid gap-5 px-5 mt-8">
@@ -33,13 +30,10 @@ export default function Home() {
         </p>
       </div>
       <div className="flex justify-between">
-        {Object.entries(dashboardStats).map(([key,value])=>{
-          return(
-            <StatsCard key={key} stat={key} value={value}/>
-          )
-        })}
+        {Object.entries(stats).map(([stat, value]) => (
+          <StatsCard key={stat} stat={stat} value={value} />
+        ))}
       </div>
-      
       <div className="flex gap-2 justify-between">
         <div className="flex items-center">
           <TopSellingCategory/>

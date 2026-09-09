@@ -1,30 +1,52 @@
-import { Handbag,ArrowUp,Boxes, CircleDollarSign,CircleAlert} from "lucide-react"
+import {
+  Handbag,
+  ArrowUp,
+  Boxes,
+  CircleDollarSign,
+  CircleAlert
+} from "lucide-react";
 
-interface props{
-    stat:string,
-    value:any
-}
-export function StatsCard({stat,value}:props){
-    return(
-        <div className="w-[240px] px-4 py-3 rounded-md bg-surface border border-border grid content-start gap-5">
-            <div className="flex h-fit items-center">
-                <div className="p-2 rounded-md bg-success-light">
-                    {stat === 'totalProducts' && <Handbag  size={20} className="text-primary"/>}
+type Props = {
+  stat: string;
+  value: number;
+};
 
-                    {stat === 'totalUnit' && <Boxes  size={20} className="text-primary"/>}
-                    {stat === 'lowStocks' && <CircleAlert  size={20} className="text-primary"/>}
-                    {stat === 'totalRevenue' && <CircleDollarSign  size={20} className="text-primary"/>}
-                </div>
-                <h1 className="font-medium">{stat}</h1>
-            </div>
-            <h1 className="text-2xl font-bold">{stat === 'totalRevenue' && '$'} {value}</h1>
-            <div className="flex gap-2 items-center">
-                <div className="w-fit flex gap-2 p-2 rounded-md bg-success-light text-primary text-sm">
-                    <ArrowUp size={20}/>
-                    <span>25.5%</span>
-                </div>
-                <p className="text-text-secondary text-sm">vs last week</p>
-            </div>
+const labels: Record<string, string> = {
+  totalProducts: "Total Products",
+  totalUnit: "Total Units",
+  lowStocks: "Low Stocks",
+  totalRevenue: "Inventory Value"
+};
+
+export function StatsCard({ stat, value }: Props) {
+  const Icon =
+    stat === "totalProducts"
+      ? Handbag
+      : stat === "totalUnit"
+        ? Boxes
+        : stat === "lowStocks"
+          ? CircleAlert
+          : CircleDollarSign;
+
+  return (
+    <div className="w-[240px] rounded-md border border-border bg-surface px-4 py-3">
+      <div className="flex items-center gap-3">
+        <div className="rounded-md bg-success-light p-2">
+          <Icon size={20} className="text-primary" />
         </div>
-    )
+        <h2 className="font-medium">{labels[stat] || stat}</h2>
+      </div>
+
+      <h2 className="mt-5 text-2xl font-bold">
+        {stat === "totalRevenue" && "₦"}
+        {Number(value).toLocaleString()}
+      </h2>
+
+      <div className="mt-5 flex items-center gap-2 text-sm text-primary">
+        <ArrowUp size={18} />
+        <span>25.5%</span>
+        <span className="text-text-secondary">vs last week</span>
+      </div>
+    </div>
+  );
 }
