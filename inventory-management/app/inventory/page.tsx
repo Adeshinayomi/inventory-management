@@ -9,7 +9,7 @@ import { getInventoryProducts, type Product } from "@/lib/prouduct";
 import { useRouter } from "next/navigation";
 
 export default function InventoryPage() {
-    const router = useRouter()
+  const router = useRouter()
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -17,11 +17,12 @@ export default function InventoryPage() {
 
   useEffect(() => {
     getInventoryProducts()
-      .then((data) => setProducts(data.products))
-      .catch((err) => {
+    .then((data) => {
+        setProducts(data.products)
+    }).catch((err) => {
         setError(err.message);
-       
-       });
+        router.replace('/login')
+    });
   }, []);
 
   const filteredProducts = useMemo(() => {
