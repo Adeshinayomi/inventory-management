@@ -1,28 +1,42 @@
-import { Filter, SearchIcon } from "lucide-react";
+"use client";
 
-export function InventoryFilters() {
+import { SearchIcon } from "lucide-react";
+
+type Props = {
+  search: string;
+  status: string;
+  onSearchChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
+};
+
+export function InventoryFilters({
+  search,
+  status,
+  onSearchChange,
+  onStatusChange,
+}: Props) {
   return (
-    <div className="w-full flex justify-between items-center mb-2">
-      <div className="w-1/2 relative">
-        <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+    <div className="flex w-full items-center justify-between gap-4">
+      <div className="relative w-1/2">
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
-          type="text"
-          placeholder="Search Inventory..."
-          className="w-full px-10 py-2 border border-border rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+          value={search}
+          onChange={(event) => onSearchChange(event.target.value)}
+          placeholder="Search inventory..."
+          className="w-full rounded-full border border-border px-10 py-2"
         />
       </div>
-      <div className="flex gap-2">
-        <select className="px-4 py-2 border border-border rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
-          <option value="">All Status</option>
-          <option value="In-Stock">In-Stock</option>
-          <option value="Out-of-Stock">Out Of Stock</option>
-          <option value="Low-Stock">Low Stocks</option>
-        </select>
-        <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">
-          <Filter size={20} className="inline-block mr-1" />
-          Filter
-        </button>
-      </div>
+
+      <select
+        value={status}
+        onChange={(event) => onStatusChange(event.target.value)}
+        className="rounded-full border border-border px-4 py-2"
+      >
+        <option value="">All Status</option>
+        <option value="In-Stock">In Stock</option>
+        <option value="Low-Stock">Low Stock</option>
+        <option value="Out-of-Stock">Out Of Stock</option>
+      </select>
     </div>
   );
 }

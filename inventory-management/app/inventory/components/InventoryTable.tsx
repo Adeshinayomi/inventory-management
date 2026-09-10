@@ -1,33 +1,30 @@
 import { Ellipsis } from "lucide-react";
-import Image, { type StaticImageData } from "next/image";
 
-import type { InventoryItem } from "./inventory-data";
+import type { Product } from "../../../lib/prouduct";
 
-type InventoryTableProps = {
-  items: InventoryItem[];
-  productImage: StaticImageData;
-};
 
-function InventoryStatus({ item }: { item: InventoryItem }) {
-  const isLowStock = item.stockLevel < item.threshold;
+
+function InventoryStatus({ item }: { item:Product }) {
+  const isLowStock = item.stock < item.threshold;
+  const isOutOfStock = item.stock === 0
 
   return isLowStock ? (
     <span className="bg-red-100 text-red-800 px-2 py-1 rounded">Low Stock</span>
-  ) : (
+  ) :  (
     <span className="bg-green-100 text-green-800 px-4 py-1 rounded">In Stock</span>
   );
 }
 
-function InventoryTableRow({ item, productImage }: { item: InventoryItem; productImage: StaticImageData }) {
+function InventoryTableRow({ item }: { item:Product }) {
   return (
     <tr className="border-b border-border">
       <td className="flex items-center text-left text-sm py-2">
-        <Image src={productImage} alt={item.name} className="w-1/4 h-16 object-cover rounded-sm" />
+        <img src={item.image} alt={item.name} className="w-1/4 h-16 object-cover rounded-sm"/>
         <span className="ml-2">{item.name}</span>
       </td>
-      <td className="text-center text-sm py-2">SKU-{item.id}</td>
-      <td className="text-center text-sm py-2">Electronics</td>
-      <td className="text-center text-sm py-2">{item.stockLevel}</td>
+      <td className="text-center text-sm py-2">{item.sku}</td>
+      <td className="text-center text-sm py-2">{item.category}</td>
+      <td className="text-center text-sm py-2">{item.stock}</td>
       <td className="text-center text-sm py-2">${item.price.toFixed(2)}</td>
       <td className="text-center text-sm py-2">{item.threshold}</td>
       <td className="text-center text-sm py-2">
@@ -42,7 +39,7 @@ function InventoryTableRow({ item, productImage }: { item: InventoryItem; produc
   );
 }
 
-export function InventoryTable({ items, productImage }: InventoryTableProps) {
+export function InventoryTable({items}: {items: Product[]}) {
   return (
     <table className="w-full border-collapse">
       <thead>
@@ -59,7 +56,7 @@ export function InventoryTable({ items, productImage }: InventoryTableProps) {
       </thead>
       <tbody>
         {items.map((item) => (
-          <InventoryTableRow key={item.id} item={item} productImage={productImage} />
+          <InventoryTableRow key={item._id} item={item} />
         ))}
       </tbody>
     </table>
