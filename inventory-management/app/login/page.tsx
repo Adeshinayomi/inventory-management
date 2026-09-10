@@ -5,6 +5,9 @@ import { Eye, EyeOff, LockKeyhole, Mail, PackageCheck } from "lucide-react";
 import { loginUser } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
+type loginResponse={
+  token:string
+}
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -19,7 +22,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const data = await loginUser({
+      const data:loginResponse = await loginUser({
         email,
         password,
       });

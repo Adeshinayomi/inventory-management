@@ -5,7 +5,7 @@ type LoginData = {
   password: string;
 };
 
-export async function loginUser(data: LoginData) {
+export async function loginUser<T = unknown>(data: LoginData):Promise<T>{
   return apiFetch("/users/login", {
     method: "POST",
     body: JSON.stringify(data),
