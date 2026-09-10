@@ -1,19 +1,19 @@
-import Image from "next/image";
-import Iphone11 from '../../public/iphone-image.jpg'
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getLowStockProducts, type Product } from "@/lib/prouduct";
+
+
 export function LowStocks() {
-    const lowStockItems = [
-        { id: 1, name: "Iphone 11", stockLevel: 5, threshold: 10 },
-        { id: 2, name: "Air Pods", stockLevel: 3, threshold: 5 },
-        { id: 3, name: "Iphone xr", stockLevel: 1, threshold: 5 },
-        { id: 4, name: "Smartwatch", stockLevel: 2, threshold: 5 },
-        {
-            id: 5,
-            name: "Wireless Charger",
-            stockLevel: 0,
-            threshold: 5,
-        }
-    ];
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    getLowStockProducts()
+      .then((data) => setProducts(data.products.slice(0, 5)))
+      .catch(console.error);
+  }, []);
+
    return (
     //low stocks table
     <div className="border border-border rounded-md p-4 w-[45%]">
@@ -34,18 +34,18 @@ export function LowStocks() {
             </thead>
             <tbody>
                 {/* Low stock items would be listed here */}
-                {lowStockItems.map((item) => (  
-                    <tr key={item.id} className="border-b border-border py-2">
+                {products.map((item) => (  
+                    <tr key={item._id} className="border-b border-border py-2">
                         <td className="text-left text-sm py-3 flex items-center gap-2">
-                            <Image src={Iphone11} alt={item.name} className="w-1/2 h-10 object-cover rounded-sm" />
+                            <img src={item.image} alt={item.name} className="w-1/2 h-10 object-cover rounded-sm"/>
                             <span className="w-full overflow-hidden text-ellipsis" title={item.name}>
                                 {item.name}
                             </span>
                         </td>
-                        <td className="text-center text-sm py-3">{item.stockLevel}</td>
+                        <td className="text-center text-sm py-3">{item.stock}</td>
                         <td className="text-center text-sm py-3">{item.threshold}</td>
-                        <td className={`text-center text-sm py-3 ${item.stockLevel <= 2 ? "text-red-500" : item.stockLevel <= 5 ? "text-yellow-500" : "text-green-500"}`}>
-                            {item.stockLevel <= 2 ? "Critical" : item.stockLevel <= 5 ? "Low" : "Sufficient"}
+                        <td className={`text-center text-sm py-3 ${item.stock <= 2 ? "text-red-500" : item.stock <= 5 ? "text-yellow-500" : "text-green-500"}`}>
+                            {item.stock <= 2 ? "Critical" : item.stock <= 5 ? "Low" : "Sufficient"}
                         </td>
                     </tr>
                 ))}

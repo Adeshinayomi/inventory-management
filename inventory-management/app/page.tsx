@@ -6,9 +6,9 @@ import  TopSellingCategory from "./component/PieChart"
 import SalesChart from "./component/BarChart";
 import { useState, useEffect } from "react";
 import { getDashboardStats, type DashboardStats } from "@/lib/prouduct";
-
+import { useRouter } from "next/navigation";
 export default function Home() {
-
+  const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
     totalUnit: 0,
@@ -17,7 +17,13 @@ export default function Home() {
   });
 
   useEffect(() => {
-    getDashboardStats().then(setStats).catch(console.error);
+      getDashboardStats().
+      then((data)=>{
+        setStats(data)
+      }).catch((error)=>{
+          console.log(error.message)
+          router.replace('/login')
+      })
   }, []);
 
   
