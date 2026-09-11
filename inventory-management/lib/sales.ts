@@ -11,7 +11,11 @@ export type Sales={
     }],
     totalAmount:number,
     paymentMethod:string,
-    soldBy: string,
+    soldBy: {
+        _id:string,
+        name:string,
+        email:string
+    },
     orderDate:string
 }
 export function getTotalSales (){
