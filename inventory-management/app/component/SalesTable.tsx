@@ -1,42 +1,32 @@
+"use client"
 import {ChevronRight,Briefcase} from "lucide-react";
+import { useState,useEffect } from "react";
+import {type Sales,getTotalSales } from "@/lib/sales";
+import { formateDate } from "@/lib/utils";
 export function SalesTable() {
-    const Sales= [
-        {
-            id: 1001,
-            customer: "John Doe",
-            date: "2023-01-15",
-            status: "Pending",
-            amount: 25000,
-        },
-        {
-            id: 1002,
-            customer: "Jane Smith",
-            date: "2023-01-16",
-            status: "Completed",
-            amount: 30000,
-        },
-        {
-            id: 1003,
-            customer: "Michael Johnson",
-            date: "2023-01-17",
-            status: "Completed",
-            amount: 15000,
-        },
-        {
-            id: 1004,
-            customer: "Emily Davis",
-            date: "2023-01-18",
-            status: "Cancelled",
-            amount: 20000,
-        },
-        {
-            id: 1005,
-            customer: "William Brown",
-            date: "2023-01-19",
-            status: "Pending",
-            amount: 18000,
-        }
-    ];
+    const [recentSales, setRecentSales]=useState<Sales[]>([])
+    
+    useEffect(()=>{
+        getTotalSales().then((data)=>{
+            setRecentSales(data.orders.slice(0,5))
+        }).catch((error)=>{
+            console.log(error)
+        })
+
+    },[])
+
+    if(recentSales.length === 0){
+        return(
+            <div className="border border-border grid rounded-md p-4 w-[55%]">
+                <h1 className="text-xl font-bold">Recent Sales</h1>
+                <p className="text-lg text-text-muted text-center">
+                    Nothing to see here.
+                </p>
+            </div>
+        )
+    }
+
+
   return (
     <div className="border border-border rounded-md p-4 w-[55%]">
         <div className="flex justify-between items-center mb-4 pr-4">
@@ -50,24 +40,24 @@ export function SalesTable() {
             <thead className="text-muted-foreground">
                 <tr className="border-b border-border">
                     <th className="text-left text-md w-[150px]">Sale ID</th>
-                    <th className="text-left text-md w-[200px]">Customer</th>
-                    <th className="text-left text-md w-[150px]">Date</th>
+                    <th className="text-left text-md w-[200px]">Date</th>
+                    <th className="text-left text-md w-[150px]">Items</th>
                     <th className="text-center text-md w-[100px] ">Amount</th>
-                    <th className="text-center text-md w-[150px]">Status</th>
+                    <th className="text-center text-md w-[150px]">Payment Method</th>
                 </tr>
             </thead>
             <tbody>
-                {Sales.map((sale) => (
-                    <tr key={sale.id} className="border-b border-border">
+                {recentSales.map((sale) => (
+                    <tr key={sale._id} className="border-b border-border">
                         <td className="text-sm py-4 flex items-center">
                             <Briefcase size={30} className="inline-block mr-1 text-primary bg-primary/10 p-1 rounded-sm" />
-                            <span>#{sale.id}</span>
+                            <span>#{sale.orderId}</span>
                         </td>
-                        <td className="text-sm py-4">{sale.customer}</td>
-                        <td className="text-sm py-4">{sale.date}</td>
-                        <td className="text-sm text-center py-4">₦{sale.amount.toLocaleString()}</td>
-                        <td className={`text-center text-sm py-4 ${sale.status === "Completed" ? "text-green-500" : sale.status === "Cancelled" ? "text-red-500" : "text-yellow-500"}`}>
-                            {sale.status}
+                        <td className="text-sm py-4">{formateDate(sale.orderDate)}</td>
+                        <td className="text-sm py-4">{sale.items.length}</td>
+                        <td className="text-sm text-center py-4">₦{sale.totalAmount}</td>
+                        <td className={`text-center text-sm py-4`}>
+                            {sale.paymentMethod}
                         </td>
                         <td className="py-2"><ChevronRight size={16} className="inline-block ml-1 text-black" /></td>
                     </tr>
