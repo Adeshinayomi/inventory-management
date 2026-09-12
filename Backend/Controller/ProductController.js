@@ -212,11 +212,11 @@ exports.getDashboardStats = async (req,res)=>{
           }
     }).countDocuments();
     const totalProducts = await Product.countDocuments();
-    const totalRevenue = await Product.aggregate([
+    const inventoryValue = await Product.aggregate([
         {
             $group: {
                 _id: null,
-                totalProductValue: {
+                total: {
                     $sum: {
                         $multiply: ["$price", "$stock"]
                     }
@@ -239,7 +239,7 @@ exports.getDashboardStats = async (req,res)=>{
       totalProducts,
       totalUnit:totalUnit[0]?.totalStock || 0,
       lowStocks,
-      totalRevenue: totalRevenue[0]?.totalProductValue || 0
+      inventoryValue: inventoryValue[0]?.total || 0
     })
   }catch(error){
     res.status(500).json({message:error.message})
