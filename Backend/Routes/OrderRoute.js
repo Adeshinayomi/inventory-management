@@ -11,5 +11,7 @@ route.get("/totalProductsSold", authenticateToken, authorize(["owner","storekeep
 route.get("/totalSales", authenticateToken, authorize(["owner","storekeeper"]), OrderController.getTotalSales);
 route.get("/totalOrders",authenticateToken, authorize(["owner","storekeeper"]), OrderController.getTotalOrders)
 route.get("/topSellingCategory",authenticateToken,authorize(["owner","storekeeper"]),OrderController.getTopSellingCategory)
+route.get("/order-stats",authenticateToken,authorize(["owner","storekeeper"]),OrderController.getOrdersStats)
+
 
 module.exports=route

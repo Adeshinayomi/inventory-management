@@ -250,3 +250,43 @@ exports.getTopSellingCategory = async (req, res) => {
     });
   }
 };
+
+exports.getOrdersStats =  async (req,res)=>{
+  try{
+    const totalSales = await Order.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalSales: {
+            $sum: "$totalAmount",
+          },
+        },
+      },
+    ]);
+    const totalOrders = await Order.find().countDocuments();
+    const itemsSold = await Order.aggregate([
+      {
+        $unwind: "$items"
+      },
+      {
+        $group:{
+          _id: null,
+          total: {
+            $sum: "$items.quantity"
+          }
+        }
+      }
+    ])
+
+    const averageOrderValue = totalOrders === 0 ? 0 : totalSales[0]?.totalSales / totalOrders;
+
+    res.status(200).json({
+      totalSales:totalSales[0]?.totalSales || 0,
+      totalOrders,
+      itemsSold:itemsSold[0]?.total || 0,
+      averageOrderValue
+    })
+  }catch(error){
+    res.status(500).json({message:error.message})
+  }
+}
