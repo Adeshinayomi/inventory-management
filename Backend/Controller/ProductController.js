@@ -154,15 +154,6 @@ exports.updateProduct = async (req, res) => {
     }
 }
 
-exports.getTotalProducts = async (req, res) => {
-    try {
-        const totalProducts = await Product.countDocuments();
-        res.status(200).json({ totalProducts });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
 exports.deleteProduct = async (req, res) => {
     try {
         const product = await Product.findOneAndDelete({ sku: req.params.sku });
@@ -174,34 +165,6 @@ exports.deleteProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-
-exports.getAvailableProducts = async (req, res) => {
-    try {
-        const availableProducts = await Product.find({ available: true });
-        res.status(200).json({ availableProducts });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-exports.getUnavailableProducts = async (req, res) => {
-    try {
-        const unavailableProducts = await Product.find({ available: false });
-        res.status(200).json({ unavailableProducts });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-exports.getProductsByCategory = async (req, res) => {
-    try {
-        const products = await Product.find({ category: req.params.category });
-        res.status(200).json({ products });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
 
 exports.getDashboardStats = async (req,res)=>{
   try{

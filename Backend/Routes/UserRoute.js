@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const route = require("express").Router();
 const UserController = require("../Controller/UserController.js");
 

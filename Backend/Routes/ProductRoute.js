@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const route = require("express").Router();
 const ProductController = require("../Controller/ProductController.js");
 const authenticateToken= require("../Middleware/Auth.js");
@@ -16,13 +15,7 @@ route.get("/getProduct/:sku", authenticateToken, ProductController.getProductByI
 
 route.put("/updateProduct/:sku", authenticateToken, authorize(["owner"]), ProductController.updateProduct);
 
-route.get("/totalProducts", authenticateToken, ProductController.getTotalProducts);
-
-route.get("/availableProducts", authenticateToken, ProductController.getAvailableProducts);
 route.get("/dashboard-stats", authenticateToken, ProductController.getDashboardStats);
-route.get("/unavailableProducts", authenticateToken, ProductController.getUnavailableProducts);
-
-route.get("/getProducts/:category", authenticateToken, ProductController.getProductsByCategory);
 
 route.delete("/deleteProduct/:sku", authenticateToken, authorize(["owner"]), ProductController.deleteProduct);
 
