@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import {
   Bar,
   BarChart,
@@ -18,27 +20,68 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const salesData = [
-  { month: "Jan", sales: 42000 },
-  { month: "Feb", sales: 58000 },
-  { month: "Mar", sales: 46000 },
-  { month: "Apr", sales: 72000 },
-  { month: "May", sales: 65000 },
-  { month: "Jun", sales: 89000 },
-  { month: "Jul", sales: 76000 },
-];
+import {
+  getMonthlySales,
+  type MonthlySales,
+} from "@/lib/sales";
 
 export default function SalesChart() {
+  const [salesData, setSalesData] = useState<MonthlySales[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        setLoading(true);
+
+        const data = await getMonthlySales();
+
+        setSalesData(data);
+      } catch (error) {
+        console.error("Error fetching monthly sales:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSales();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">
+            Sales Overview
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex h-[350px] items-center justify-center">
+            <p className="text-sm text-text-muted">
+              Loading sales...
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl">Sales Overview</CardTitle>
+        <CardTitle className="text-xl">
+          Sales Overview
+        </CardTitle>
       </CardHeader>
 
       <CardContent>
         <div className="h-[350px] w-full">
-          <ResponsiveContainer className="w-full h-full">
-            <BarChart className="w-full h-full"
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+          >
+            <BarChart
               data={salesData}
               margin={{
                 top: 10,
@@ -62,25 +105,33 @@ export default function SalesChart() {
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={(value) => `₦${value / 1000}k`}
+                tickFormatter={(value) =>
+                  `₦${value / 1}`
+                }
                 className="text-muted-foreground"
               />
 
               <Tooltip
-                cursor={{ fill: "var(--color-surface)" }}
+                cursor={{
+                  fill: "var(--color-surface)",
+                }}
                 formatter={(value) => [
                   `₦${Number(value).toLocaleString()}`,
                   "Sales",
                 ]}
               />
 
-              <Bar radius={[6,6,0,0]} dataKey="sales">
+              <Bar
+                dataKey="sales"
+                radius={[6, 6, 0, 0]}
+              >
                 {salesData.map((entry) => (
                   <Cell
-                    // border
                     key={entry.month}
                     fill={
-                      entry.month === "Apr" || entry.month === "Jun" || entry.month === "Jul"
+                      entry.month === "Apr" ||
+                      entry.month === "Jun" ||
+                      entry.month === "Jul"
                         ? "var(--color-primary)"
                         : "var(--color-surface-secondary)"
                     }
@@ -94,3 +145,4 @@ export default function SalesChart() {
     </Card>
   );
 }
+
