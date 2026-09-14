@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductFilters } from "./components/ProductFilter";
 import { ProductHeader } from "./components/ProductHeader";
 import { ProductTable } from "./components/ProductTable";
-import { getInventoryProducts, type Product } from "@/lib/prouduct";
+import { getInventoryProducts, type Product } from "@/lib/inventory";
 import { useRouter } from "next/navigation";
 
 export default function ProductPage() {
@@ -33,11 +33,7 @@ export default function ProductPage() {
 
       const matchesStatus =
         !status ||
-        (status === "In-Stock" && product.stock > product.threshold) ||
-        (status === "Low-Stock" &&
-          product.stock > 0 &&
-          product.stock <= product.threshold) ||
-        (status === "Out-of-Stock" && product.stock === 0);
+        (status === product.category);
 
       return matchesSearch && matchesStatus;
     });
@@ -46,7 +42,6 @@ export default function ProductPage() {
   return (
     <section className="grid gap-5 px-5 mt-8">
       <ProductHeader/>
-
       <div className="grid gap-5 w-full bg-surface border border-border rounded-md p-4">
         <ProductFilters
           search={search}

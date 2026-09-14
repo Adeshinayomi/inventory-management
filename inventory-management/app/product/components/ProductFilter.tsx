@@ -1,7 +1,7 @@
 "use client";
-
+import { useState,useEffect } from "react";
 import { SearchIcon } from "lucide-react";
-
+import { getCategories } from "@/lib/inventory";
 type Props = {
   search: string;
   status: string;
@@ -15,6 +15,14 @@ export function ProductFilters({
   onSearchChange,
   onStatusChange,
 }: Props) {
+  const [category,setCategory]=useState<string[]>()
+
+  useEffect(()=>{
+    getCategories().
+    then((data)=>{
+        setCategory(data.categories)
+    })
+  },[])
   return (
     <div className="flex w-full items-center justify-between gap-4">
       <div className="relative w-1/2">
@@ -32,10 +40,12 @@ export function ProductFilters({
         onChange={(event) => onStatusChange(event.target.value)}
         className="rounded-full border border-border px-4 py-2"
       >
-        <option value="">All Status</option>
-        <option value="In-Stock">In Stock</option>
-        <option value="Low-Stock">Low Stock</option>
-        <option value="Out-of-Stock">Out Of Stock</option>
+        <option value="">Categories</option>
+        {category?.map((data,index)=>{
+            return(
+                <option key={index} value={data}>{data}</option>
+            )
+        })}
       </select>
     </div>
   );

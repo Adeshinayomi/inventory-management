@@ -1,19 +1,25 @@
 import { Ellipsis } from "lucide-react";
 
-import type { Product } from "../../../lib/prouduct";
+import type { Product } from "../../../lib/inventory";
 
 
+function ProductStatus({ item }: { item: Product }) {
+  if (!item.available) {
+    return (
+      <span className="rounded bg-red-100 px-2 py-1 text-red-800">
+        unavailable
+      </span>
+    );
+  }
 
-function ProductStatus({ item }: { item:Product }) {
-  const isLowStock = item.stock < item.threshold;
-  const isOutOfStock = item.stock === 0
-
-  return isLowStock ? (
-    <span className="bg-red-100 text-red-800 px-2 py-1 rounded">Low Stock</span>
-  ) :  (
-    <span className="bg-green-100 text-green-800 px-4 py-1 rounded">In Stock</span>
+  return (
+    <span className="rounded bg-green-100 px-4 py-1 text-green-800">
+      available
+    </span>
   );
 }
+
+
 
 function ProductTableRow({ item }: { item:Product }) {
   return (
@@ -24,9 +30,9 @@ function ProductTableRow({ item }: { item:Product }) {
       </td>
       <td className="text-center text-sm py-2">{item.sku}</td>
       <td className="text-center text-sm py-2">{item.category}</td>
-      <td className="text-center text-sm py-2">{item.stock}</td>
+      {/* <td className="text-center text-sm py-2">{item.stock}</td> */}
       <td className="text-center text-sm py-2">${item.price.toFixed(2)}</td>
-      <td className="text-center text-sm py-2">{item.threshold}</td>
+      {/* <td className="text-center text-sm py-2">{item.threshold}</td> */}
       <td className="text-center text-sm py-2">
         <ProductStatus item={item} />
       </td>
@@ -44,12 +50,12 @@ export function ProductTable({items}: {items: Product[]}) {
     <table className="w-full border-collapse">
       <thead>
         <tr className="border-b border-border bg-background">
-          <th className="text-left text-sm py-2 w-1/5 pl-2">Product</th>
+          <th className="text-left text-sm py-2 w-1/3 pl-2">Product</th>
           <th className="text-center text-sm py-2 w-1/7">SKU</th>
           <th className="text-center text-sm py-2">Category</th>
-          <th className="text-center text-sm py-2 w-1/7">Stock</th>
+          {/* <th className="text-center text-sm py-2 w-1/7">Stock</th> */}
           <th className="text-center text-sm py-2">Price</th>
-          <th className="text-center text-sm py-2 w-1/7">Threshold</th>
+          {/* <th className="text-center text-sm py-2 w-1/7">Threshold</th> */}
           <th className="text-center text-sm py-2">Status</th>
           <th className="text-center text-sm py-2 w-1/9">Actions</th>
         </tr>
