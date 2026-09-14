@@ -1,6 +1,6 @@
 import { Ellipsis } from "lucide-react";
 
-import type { Product } from "../../../lib/prouduct";
+import type { Product } from "../../../lib/inventory";
 
 
 

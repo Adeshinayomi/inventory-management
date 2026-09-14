@@ -5,9 +5,10 @@ import {
   Boxes,
   CircleDollarSign,
   CircleAlert,
+  XCircle
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { inventoryItems } from "../inventory/components/inventory-data";
+
 
 type Props = {
   stat: string;
@@ -25,23 +26,27 @@ const statConfig: Record<string, StatConfig> = {
     label: "Total Products",
     icon: Handbag,
   },
-
-  totalUnit: {
-    label: "Total Units",
-    icon: Boxes,
-  },
-
-  lowStocks: {
-    label: "Low Stocks",
-    icon: CircleAlert,
-  },
-
+  
   inventoryValue: {
     label: "Inventory Value",
     icon: CircleDollarSign,
     isCurrency: true,
   },
 
+  totalUnit: {
+    label: "Total Units",
+    icon: Boxes,
+  },
+  outOfStock: {
+    label: "Out Of Stock",
+    icon: XCircle,
+  },
+
+  lowStocks: {
+    label: "Low Stocks",
+    icon: CircleAlert,
+  },
+  
   totalSales: {
     label: "Total Sales",
     icon: CircleDollarSign,

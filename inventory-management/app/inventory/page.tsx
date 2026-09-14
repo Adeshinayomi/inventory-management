@@ -5,7 +5,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { InventoryFilters } from "./components/InventoryFilters";
 import { InventoryHeader } from "./components/InventoryHeader";
 import { InventoryTable } from "./components/InventoryTable";
-import { getInventoryProducts, type Product } from "@/lib/prouduct";
+import { Stats } from "./components/InventoryStats";
+import { getInventoryProducts, type Product } from "@/lib/inventory";
 import { useRouter } from "next/navigation";
 
 export default function InventoryPage() {
@@ -46,7 +47,7 @@ export default function InventoryPage() {
   return (
     <section className="grid gap-5 px-5 mt-8">
       <InventoryHeader />
-
+      <Stats />
       <div className="grid gap-5 w-full bg-surface border border-border rounded-md p-4">
         <InventoryFilters
           search={search}
