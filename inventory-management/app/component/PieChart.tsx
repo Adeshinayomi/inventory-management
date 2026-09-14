@@ -1,6 +1,12 @@
 "use client";
 
-import { Pie, PieChart, Cell, ResponsiveContainer } from "recharts";
+import { useEffect, useState } from "react";
+import {
+  Pie,
+  PieChart,
+  Cell,
+  ResponsiveContainer,
+} from "recharts";
 
 import {
   Card,
@@ -9,28 +15,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const categoryData = [
-  {
-    category: "Electronics",
-    sales: 150,
-  },
-  {
-    category: "Accessories",
-    sales: 220,
-  },
-  {
-    category: "Clothing",
-    sales: 290,
-  },
-  {
-    category: "Home Appliances",
-    sales: 450,
-  },
-    {
-    category: "others",
-    sales: 80,
-  },
-];
+import {
+  getTopSellingCategories,
+  type CategorySales,
+} from "@/lib/sales";
 
 const COLORS = [
   "var(--chart-4)",
@@ -41,6 +29,63 @@ const COLORS = [
 ];
 
 export default function TopSellingCategory() {
+  const [categoryData, setCategoryData] = useState<CategorySales[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+
+        const data = await getTopSellingCategories();
+
+        setCategoryData(data);
+      } catch (error) {
+        console.error("Error fetching top selling categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold">
+            Top Selling Category
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="flex h-full items-center justify-center">
+          <p className="text-sm text-text-muted">
+            Loading...
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (categoryData.length === 0) {
+    return (
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold">
+            Top Selling Category
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="flex h-full items-center justify-center">
+          <p className="text-sm text-text-muted">
+            No sales data available.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const totalSales = categoryData.reduce(
     (total, item) => total + item.sales,
     0
@@ -51,61 +96,68 @@ export default function TopSellingCategory() {
   );
 
   return (
-    <Card className="h-full grid">
+    <Card className="grid h-full">
       <CardHeader>
-        <CardTitle className="text-base font-semibold text-xl">
+        <CardTitle className="text-xl font-semibold">
           Top Selling Category
         </CardTitle>
       </CardHeader>
 
       <CardContent className="grid h-full content-between">
-        <div className="flex items-center gap-6 ">
-            {/* Category list */}
+        <div className="flex gap-6">
+          {/* Category list */}
           <div className="flex flex-1 flex-col gap-4">
             {categoryData.map((item, index) => {
-              const percentage = Math.round(
-                (item.sales / totalSales) * 100
-              );
+              const percentage =
+                totalSales === 0
+                  ? 0
+                  : Math.round((item.sales / totalSales) * 100);
 
               return (
-                <div  key={item.category}>
-                    <div
-                    className="flex items-center justify-between gap-3"
-                    >
+                <div key={item.category}>
+                  <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-2">
-                        <span
+                      <span
                         className="h-2.5 w-2.5 shrink-0 rounded-full"
                         style={{
-                            backgroundColor:
+                          backgroundColor:
                             COLORS[index % COLORS.length],
                         }}
-                        />
+                      />
 
-                        <span className="truncate text-sm text-text-secondary">
+                      <span className="truncate text-sm text-text-secondary">
                         {item.category}
-                        </span>
+                      </span>
                     </div>
 
                     <span className="text-sm font-medium text-text-primary">
-                        {percentage}%
+                      {percentage}%
                     </span>
-                    </div>
-                    <div className="w-full rounded-full bg-background flex ju">
-                        <div className={`w-[${Number(percentage)}%] h-2 rounded-full`} style={{
-                            backgroundColor:
-                            COLORS[index % COLORS.length],
-                            
-                            width: `${percentage}%` 
-                        }}></div>
-                    </div>
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="flex w-full rounded-full bg-background">
+                    <div
+                      className="h-2 rounded-full"
+                      style={{
+                        backgroundColor:
+                          COLORS[index % COLORS.length],
+                        width: `${percentage}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               );
             })}
           </div>
+
           {/* Chart */}
           <div className="relative h-[180px] w-[180px] shrink-0">
-            <ResponsiveContainer className="w-full h-full">
-              <PieChart className="w-full h-full">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+            >
+              <PieChart>
                 <Pie
                   data={categoryData}
                   dataKey="sales"
@@ -124,7 +176,6 @@ export default function TopSellingCategory() {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            
 
             {/* Center text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -133,11 +184,10 @@ export default function TopSellingCategory() {
               </span>
 
               <span className="text-2xl font-bold text-text-primary">
-                {topCategory.sales}
+                {totalSales.toLocaleString()}
               </span>
             </div>
           </div>
-
         </div>
 
         {/* Bottom summary */}
@@ -152,7 +202,7 @@ export default function TopSellingCategory() {
             </span>
 
             <span className="text-sm font-semibold text-primary">
-              {topCategory.sales} sales
+              {topCategory.sales.toLocaleString()} sales
             </span>
           </div>
         </div>
@@ -160,4 +210,3 @@ export default function TopSellingCategory() {
     </Card>
   );
 }
-
