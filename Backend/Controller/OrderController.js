@@ -299,3 +299,173 @@ exports.getSalesStats = async (req, res) => {
     });
   }
 };
+
+exports.getTopSellingCategories = async (req, res) => {
+  try {
+    const categories = await Order.aggregate([
+      // 1. Break each order into individual items
+      {
+        $unwind: "$items",
+      },
+
+      // 2. Get the Product document for each item
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+
+      // 3. Turn the product array into an object
+      {
+        $unwind: "$product",
+      },
+
+      // 4. Group items by product category
+      {
+        $group: {
+          _id: "$product.category",
+
+          // Add the quantity sold for each category
+          sales: {
+            $sum: "$items.quantity",
+          },
+        },
+      },
+
+      // 5. Highest-selling category first
+      {
+        $sort: {
+          sales: -1,
+        },
+      },
+
+      // 6. Return the format your frontend expects
+      {
+        $project: {
+          _id: 0,
+          category: "$_id",
+          sales: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      categories,
+    });
+  } catch (error) {
+    console.error("Top selling categories error:", error);
+
+    res.status(500).json({
+      message: "Error fetching top selling categories",
+      error: error.message,
+    });
+  }
+};
+
+exports.getMonthlySales = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+
+    const sales = await Order.aggregate([
+      // Get orders from the current year
+      {
+        $match: {
+          orderDate: {
+            $gte: new Date(`${currentYear}-01-01`),
+            $lt: new Date(`${currentYear + 1}-01-01`),
+          },
+        },
+      },
+
+      // Group sales by month
+      {
+        $group: {
+          _id: {
+            $month: "$orderDate",
+          },
+          sales: {
+            $sum: "$totalAmount",
+          },
+        },
+      },
+
+      // Sort by month
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+
+      // Convert month number to month name
+      {
+        $project: {
+          _id: 0,
+          month: {
+            $arrayElemAt: [
+              [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+              ],
+              {
+                $subtract: ["$_id", 1],
+              },
+            ],
+          },
+          sales: 1,
+        },
+      },
+    ]);
+
+    // Create all 12 months
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    // Add months with no sales
+    const completeSales = months.map((month) => {
+      const existingMonth = sales.find(
+        (item) => item.month === month
+      );
+
+      return {
+        month,
+        sales: existingMonth ? existingMonth.sales : 0,
+      };
+    });
+
+    res.status(200).json({
+      sales: completeSales,
+    });
+  } catch (error) {
+    console.error("Monthly sales error:", error);
+
+    res.status(500).json({
+      message: "Error fetching monthly sales",
+      error: error.message,
+    });
+  }
+};

@@ -11,5 +11,8 @@ route.get("/get-order/:orderId",authenticateToken,authorize(["owner","storekeepe
 
 route.get("/stats",authenticateToken,authorize(["owner","storekeeper"]),OrderController.getSalesStats)
 
+route.get("/top-selling-category",authenticateToken,authorize(["owner","storekeeper"]),OrderController.getTopSellingCategories)
+
+route.get("/monthly",authenticateToken,authorize(["owner","storekeeper"]),OrderController.getMonthlySales)
 
 module.exports=route
