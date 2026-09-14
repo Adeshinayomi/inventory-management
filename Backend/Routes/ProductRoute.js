@@ -7,17 +7,17 @@ const authorize= require("../Middleware/role.js").authorize;
 route.post("/importProducts", authenticateToken,authorize(["owner"]), upload.single("image"), ProductController.importDefaultProducts);
 
 
-route.post("/createProduct", authenticateToken,authorize(["owner"]), upload.single("image"), ProductController.createProduct);
+route.post("/create", authenticateToken,authorize(["owner"]), upload.single("image"), ProductController.createProduct);
 
-route.get("/allProducts", authenticateToken, ProductController.getAllProducts);
+route.get("/all-products", authenticateToken, ProductController.getAllProducts);
 
-route.get("/getProduct/:sku", authenticateToken, ProductController.getProductById);
+route.get("/get-product/:sku", authenticateToken, ProductController.getProductById);
 
-route.put("/updateProduct/:sku", authenticateToken, authorize(["owner"]), ProductController.updateProduct);
+route.get("/categories", authenticateToken, ProductController.getAllCategories);
 
-route.get("/dashboard-stats", authenticateToken, ProductController.getDashboardStats);
+route.put("/update/:sku", authenticateToken, authorize(["owner"]), ProductController.updateProduct);
 
-route.delete("/deleteProduct/:sku", authenticateToken, authorize(["owner"]), ProductController.deleteProduct);
+route.delete("/delete/:sku", authenticateToken, authorize(["owner"]), ProductController.deleteProduct);
 
 
 module.exports = route;

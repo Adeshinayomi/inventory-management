@@ -169,3 +169,133 @@ exports.getOrdersStats =  async (req,res)=>{
     res.status(500).json({message:error.message})
   }
 }
+
+// Helper function for creating the date filter
+const getDateFilter = (startDate, endDate) => {
+  const filter = {};
+
+  if (startDate) {
+    const start = new Date(startDate);
+
+    if (isNaN(start.getTime())) {
+      throw new Error("Invalid start date");
+    }
+
+    start.setHours(0, 0, 0, 0);
+
+    filter.$gte = start;
+  }
+
+  if (endDate) {
+    const end = new Date(endDate);
+
+    if (isNaN(end.getTime())) {
+      throw new Error("Invalid end date");
+    }
+
+    end.setHours(23, 59, 59, 999);
+
+    filter.$lte = end;
+  }
+
+  if (startDate || endDate) {
+    return {
+      createdAt: filter,
+    };
+  }
+
+  return {};
+};
+
+
+exports.getSalesStats = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const dateFilter = getDateFilter(
+      startDate,
+      endDate
+    );
+
+    // =========================
+    // TOTAL SALES
+    // =========================
+
+    const salesResult = await Order.aggregate([
+      {
+        $match: dateFilter,
+      },
+      {
+        $group: {
+          _id: null,
+          totalSales: {
+            $sum: "$totalAmount",
+          },
+        },
+      },
+    ]);
+
+    const totalSales =
+      salesResult[0]?.totalSales || 0;
+
+
+    // =========================
+    // TOTAL ORDERS
+    // =========================
+
+    const totalOrders = await Order.countDocuments(
+      dateFilter
+    );
+
+
+    // =========================
+    // TOTAL ITEMS SOLD
+    // =========================
+
+    const itemsSoldResult = await Order.aggregate([
+      {
+        $match: dateFilter,
+      },
+      {
+        $unwind: "$items",
+      },
+      {
+        $group: {
+          _id: null,
+          itemsSold: {
+            $sum: "$items.quantity",
+          },
+        },
+      },
+    ]);
+
+    const itemsSold =
+      itemsSoldResult[0]?.itemsSold || 0;
+
+
+    // =========================
+    // AVERAGE ORDER VALUE
+    // =========================
+
+    const averageOrderValue =
+      totalOrders === 0
+        ? 0
+        : totalSales / totalOrders;
+
+
+    res.status(200).json({
+      totalSales,
+      totalOrders,
+      itemsSold,
+      averageOrderValue,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error fetching sales statistics",
+      error: error.message,
+    });
+  }
+};

@@ -153,7 +153,22 @@ exports.updateProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+exports.getAllCategories = async (req,res)=>{
+  try {
+    const categories = await Product.distinct("category");
 
+    res.status(200).json({
+      categories,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error fetching categories",
+      error: error.message,
+    });
+  }
+}
 exports.deleteProduct = async (req, res) => {
     try {
         const product = await Product.findOneAndDelete({ sku: req.params.sku });
@@ -164,47 +179,4 @@ exports.deleteProduct = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
-
-exports.getDashboardStats = async (req,res)=>{
-  try{
-
-    const lowStocks = await Product.find({
-          $expr: {
-              $lte: ["$stock", "$threshold"]
-          }
-    }).countDocuments();
-    const totalProducts = await Product.countDocuments();
-    const inventoryValue = await Product.aggregate([
-        {
-            $group: {
-                _id: null,
-                total: {
-                    $sum: {
-                        $multiply: ["$price", "$stock"]
-                    }
-                }
-            }
-        }
-    ]);
-    const totalUnit = await Product.aggregate([
-        {
-            $group: {
-                _id: null,
-                totalStock: {
-                    $sum: "$stock"
-                }
-            }
-        }
-    ]);
-    
-    res.status(200).json({
-      totalProducts,
-      totalUnit:totalUnit[0]?.totalStock || 0,
-      lowStocks,
-      inventoryValue: inventoryValue[0]?.total || 0
-    })
-  }catch(error){
-    res.status(500).json({message:error.message})
-  }
 }
