@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getLowStockProducts, type Product } from "@/lib/prouduct";
+import { getLowStockProducts, type Product } from "@/lib/inventory";
 
 
 export function LowStocks() {
