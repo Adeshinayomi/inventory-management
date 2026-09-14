@@ -51,3 +51,26 @@ export async function getSalesStats(
     `/orders/stats${query ? `?${query}` : ""}`
   );
 }
+
+
+export type CategorySales = { 
+    category: string; 
+    sales: number;
+
+ };
+export async function getTopSellingCategories(){ 
+    const data = await apiFetch<{categories:CategorySales[]}>("/orders/top-selling-category");
+    return data.categories;
+ }
+
+export type MonthlySales = {
+  month: string;
+  sales: number;
+};
+
+export async function getMonthlySales() {
+  const data = await apiFetch<{sales:MonthlySales[]}>("/orders/monthly");
+
+  return data.sales;
+}
+
