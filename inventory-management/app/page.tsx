@@ -5,12 +5,12 @@ import { LowStocks } from "./component/LowStocks";
 import  TopSellingCategory from "./component/PieChart"
 import SalesChart from "./component/BarChart";
 import { useState, useEffect } from "react";
-import { getDashboardStats, type DashboardStats } from "@/lib/prouduct";
+import { getDashboardStats, type DashboardStats } from "@/lib/dashboard";
 import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
-    totalProducts: 0,
+    totalSales: 0,
     totalUnit: 0,
     lowStocks: 0,
     totalRevenue: 0
