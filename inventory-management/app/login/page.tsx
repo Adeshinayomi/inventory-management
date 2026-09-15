@@ -6,7 +6,13 @@ import { loginUser } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
 type loginResponse={
-  token:string
+  token:string,
+  user:{
+    name:string,
+    email:string,
+    phone:number,
+    role:string
+  }
 }
 export default function LoginPage() {
   const router = useRouter();
@@ -31,7 +37,8 @@ export default function LoginPage() {
 
       // Store the token returned by your backend.
       localStorage.setItem("token", data.token);
-
+      localStorage.setItem("user", JSON.stringify(data.user))
+      
       // Redirect to dashboard.
       router.push("/");
     } catch (error) {

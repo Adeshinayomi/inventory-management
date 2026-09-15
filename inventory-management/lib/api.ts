@@ -25,7 +25,7 @@ export async function apiFetch<T = unknown>(
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
-    headers,
+    headers ,
   });
 
   const data = await response.json().catch(() => ({}));

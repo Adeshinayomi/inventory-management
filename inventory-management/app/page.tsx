@@ -7,7 +7,21 @@ import SalesChart from "./component/BarChart";
 import { useState, useEffect } from "react";
 import { getDashboardStats, type DashboardStats } from "@/lib/dashboard";
 import { useRouter } from "next/navigation";
+type userProp ={
+    name:string,
+    email:string,
+    phone:number,
+    role:string
+}
 export default function Home() {
+  const [user, setUser] = useState<userProp | null>(null);
+  useEffect(() => { 
+    const storedUser = localStorage.getItem("user"); 
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); 
+      } 
+  }, []);
+
   const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
     totalSales: 0,
@@ -30,7 +44,7 @@ export default function Home() {
   return (
     <section className="grid gap-5 px-5 mt-8">
       <div className="grid gap-2">
-        <h1 className="text-2xl font-bold">Welcome back, Bhadmus!</h1>
+        <h1 className="text-2xl font-bold">Welcome back,{user?.name}!</h1>
         <p className="text-muted-foreground text-sm">
           here is what is happening in your store today.
         </p>

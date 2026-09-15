@@ -1,5 +1,20 @@
+'use client'
 import { Search,Sun,Moon } from "lucide-react"
+import { useState,useEffect } from "react";
+type userProp ={
+    name:string,
+    email:string,
+    phone:number,
+    role:string
+}
 export function Header(){
+  const [user, setUser] = useState<userProp | null>(null);
+  useEffect(() => { 
+    const storedUser = localStorage.getItem("user"); 
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); 
+      } 
+  }, []);
     return(
         <header className="px-5 w-full bg-surface border border-border py-4 flex justify-between">
             <div className="w-2/3 flex relative">
@@ -14,8 +29,8 @@ export function Header(){
                 </div>
                 <div className="flex items-center gap-2 ">
                     <div className="grid">
-                        <h1>Bhadmus</h1>
-                        <p className="text-sm text-text-muted">Owner</p>
+                        <h1>{user?.name}</h1>
+                        <p className="text-sm text-text-muted">{user?.role}</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-primary flex justify-center items-center text-surface">
                         <h1 className="font-bold text-lg text-center">B</h1>
