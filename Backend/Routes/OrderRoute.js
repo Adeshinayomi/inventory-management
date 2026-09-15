@@ -7,6 +7,8 @@ route.post("/create-order", authenticateToken, authorize(["owner","storekeeper"]
 
 route.get("/all-orders", authenticateToken, authorize(["owner","storekeeper"]), OrderController.getAllOrders);
 
+route.get("/", authenticateToken, authorize(["owner","storekeeper"]), OrderController.getOrders);
+
 route.get("/get-order/:orderId",authenticateToken,authorize(["owner","storekeeper"]),OrderController.getOrderById)
 
 route.get("/stats",authenticateToken,authorize(["owner","storekeeper"]),OrderController.getSalesStats)

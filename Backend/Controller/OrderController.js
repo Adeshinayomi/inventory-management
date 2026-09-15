@@ -130,6 +130,68 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
+exports.getOrders = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const filter = {};
+
+    // Start date
+    if (startDate) {
+      const start = new Date(startDate);
+
+      if (isNaN(start.getTime())) {
+        return res.status(400).json({
+          message: "Invalid start date",
+        });
+      }
+
+      start.setHours(0, 0, 0, 0);
+
+      filter.orderDate = {
+        ...filter.orderDate,
+        $gte: start,
+      };
+    }
+
+    // End date
+    if (endDate) {
+      const end = new Date(endDate);
+
+      if (isNaN(end.getTime())) {
+        return res.status(400).json({
+          message: "Invalid end date",
+        });
+      }
+
+      end.setHours(23, 59, 59, 999);
+
+      filter.orderDate = {
+        ...filter.orderDate,
+        $lte: end,
+      };
+    }
+
+    const orders = await Order.find(filter)
+      .populate("items.product")
+      .populate("soldBy", "firstName lastName email")
+      .sort({ orderDate: -1 });
+
+    res.status(200).json({
+      orders,
+      count: orders.length,
+    });
+  } catch (error) {
+    console.error("Get orders error:", error);
+
+    res.status(500).json({
+      message: "Error fetching orders",
+      error: error.message,
+    });
+  }
+};
+
+
 exports.getOrdersStats =  async (req,res)=>{
   try{
     const totalSales = await Order.aggregate([
@@ -206,7 +268,6 @@ const getDateFilter = (startDate, endDate) => {
 
   return {};
 };
-
 
 exports.getSalesStats = async (req, res) => {
   try {
