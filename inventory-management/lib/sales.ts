@@ -27,9 +27,48 @@ export type OrderStats ={
 export function getTotalSales (){
     return apiFetch<{ orders: Sales[] }>('/orders/all-orders')
 }
-// export function getSalesStats(){
-//     return apiFetch<OrderStats>('/orders/stats')
-// }
+export type Order = {
+    _id:string,
+    orderId: string,
+    items: [{
+        product:string,
+        quantity:number,
+        priceAtSale:number,
+        totalAmount:number
+    }],
+    totalAmount:number,
+    paymentMethod:string,
+    soldBy: {
+        _id:string,
+        name:string,
+        email:string
+    },
+    orderDate:string
+};
+
+export async function getOrders(
+  startDate?: string,
+  endDate?: string
+){
+  const params = new URLSearchParams();
+
+  if (startDate) {
+    params.append("startDate", startDate);
+  }
+
+  if (endDate) {
+    params.append("endDate", endDate);
+  }
+
+  const query = params.toString();
+
+  const data = await apiFetch<{orders:Order[]}>(
+    `/orders/${query ? `?${query}` : ""}`
+  );
+
+  return data.orders;
+}
+
 
 export async function getSalesStats(
   startDate?: string,

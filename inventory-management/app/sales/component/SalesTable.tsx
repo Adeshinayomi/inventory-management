@@ -1,13 +1,13 @@
 import { ChevronDown,Briefcase } from "lucide-react";
 import { formateDate } from "@/lib/utils";
-import { Sales } from "@/lib/sales";
+import { Order} from "@/lib/sales";
 type SalesTableProps = {
-  items: Sales[];
+  items: Order[];
 };
 
 
 
-function SalesTableRow({ item}: { item: Sales}) {
+function SalesTableRow({ item}: { item: Order}) {
   return (
     <tr className="border-b border-border">
       <td className="flex items-center text-left text-sm py-2">
