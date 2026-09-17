@@ -31,7 +31,11 @@ export type Order = {
     _id:string,
     orderId: string,
     items: [{
-        product:string,
+       product:{
+          _id:string,
+          name:string,
+          image:string
+        },
         quantity:number,
         priceAtSale:number,
         totalAmount:number
@@ -65,7 +69,7 @@ export async function getOrders(
   const data = await apiFetch<{orders:Order[]}>(
     `/orders/${query ? `?${query}` : ""}`
   );
-
+  console.log(data.orders)
   return data.orders;
 }
 
