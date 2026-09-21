@@ -1,4 +1,5 @@
 const Inventory = require("../Models/Product.js");
+const Product = require("../Models/Product.js");
 
 exports.getLowStockProducts = async (req, res) => {
   try {
@@ -66,5 +67,63 @@ exports.getInventoryStats = async (req, res) => {
         message: "Error fetching inventory statistics",
         error: error.message,
       });
+  }
+};
+
+exports.restockProduct = async (req, res) => {
+  try {
+    const { sku } = req.params;
+    const { quantity } = req.body;
+
+    // Validate quantity exists
+    if (quantity === undefined || quantity === null) {
+      return res.status(400).json({
+        success: false,
+        message: "Restock quantity is required",
+      });
+    }
+
+    // Convert to number
+    const restockQuantity = Number(quantity);
+
+    // Validate quantity
+    if (!Number.isFinite(restockQuantity) || restockQuantity <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Restock quantity must be a positive number",
+      });
+    }
+
+    // Find product
+    const product = await Product.findOne({ sku });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    // Increase stock
+    product.stock += restockQuantity;
+
+    // Product is available once stock is above 0
+    product.available = product.stock > 0;
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: `${restockQuantity} units added to ${product.name}`,
+      product,
+    });
+  } catch (error) {
+    console.error("Restock product error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Error restocking product",
+      error: error.message,
+    });
   }
 };

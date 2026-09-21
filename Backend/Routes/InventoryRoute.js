@@ -5,5 +5,5 @@ const authorize= require("../Middleware/role.js").authorize;
 
 route.get("/low-stocks",authenticateToken,authorize(['admin','owner']), InventoryController.getLowStockProducts)
 route.get("/stats", authenticateToken, authorize(['admin','owner']), InventoryController.getInventoryStats);
-
+route.post("/:sku/restock", authenticateToken, authorize(['admin','owner']), InventoryController.restockProduct);
 module.exports = route;
