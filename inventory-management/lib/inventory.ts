@@ -31,3 +31,14 @@ export function getInventoryStats(){
 export function getLowStockProducts() {
   return apiFetch<{ products: Product[] }>("/inventory/low-stocks");
 }
+export async function restockProduct(
+  sku: string,
+  quantity: number
+) {
+  return apiFetch<{ product: Product}>(`/inventory/${sku}/restock`, {
+    method: "POST",
+    body: JSON.stringify({
+      quantity,
+    }),
+  });
+}
