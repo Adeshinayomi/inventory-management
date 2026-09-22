@@ -1,3 +1,4 @@
+import Link from "next/link";
 export function ProductHeader() {
   return (
     <div className="flex items-center justify-between mb-4">
@@ -8,9 +9,10 @@ export function ProductHeader() {
             </p>
         </div>
 
-        <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">
+        <Link href="/product/add" className="rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-primary-hover transition-colors"
+        >
             Add Product
-        </button>
+        </Link>
     </div>
   );
 }
