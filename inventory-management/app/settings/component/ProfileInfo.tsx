@@ -1,5 +1,21 @@
+"use client"
 import {EditIcon} from 'lucide-react'
+import { useState, useEffect} from "react";
+
+type userProp ={
+    name:string,
+    email:string,
+    phone:number,
+    role:string
+}
 export function ProfileInfo(){
+    const [user, setUser] = useState<userProp | null>(null);
+    useEffect(() => { 
+        const storedUser = localStorage.getItem("user"); 
+        if (storedUser) {
+        setUser(JSON.parse(storedUser)); 
+        } 
+    }, []);
     return(
         <div className="grid bg-surface px-4 py-2 rounded-md gap-7 w-1/2">
             <div className="flex justify-between items-center">
@@ -17,19 +33,19 @@ export function ProfileInfo(){
             <div className='grid grid-cols-2 gap-5'>
                 <div className='grid gap-2'>
                     <label htmlFor="name">Full Name</label>
-                    <input type="text" placeholder='Bhadmus' className='px-2 py-2 border border-border rounded-md'/>
+                    <input type="text" placeholder='Bhadmus' value={user?.name} className='px-2 py-2 border border-border rounded-md text-text-secondary text-sm'/>
                 </div>
                 <div className='grid gap-2'>
                     <label htmlFor="name">Email</label>
-                    <input type="text" placeholder='Bhadmus@gmail.com' className='px-2 py-2 border border-border rounded-md'/>
+                    <input type="text" placeholder='Bhadmus@gmail.com' value={user?.email} className='px-2 py-2 border border-border rounded-md text-text-secondary text-sm'/>
                 </div>
                 <div className='grid gap-2'>
                     <label htmlFor="name">Role</label>
-                    <input type="text" placeholder='Admin' className='px-2 py-2 border border-border rounded-md'/>
+                    <input type="text" placeholder='Admin' value={user?.role} className='px-2 py-2 border border-border rounded-md text-text-secondary text-sm'/>
                 </div>
                 <div className='grid gap-2'>
                     <label htmlFor="name">Phone</label>
-                    <input type="text" placeholder='+234 81645379' className='px-2 py-2 border border-border rounded-md'/>
+                    <input type="text" placeholder='+234 81645379' value={user?.phone} className='px-2 py-2 border border-border rounded-md text-text-secondary text-sm'/>
                 </div>
             </div>
 
