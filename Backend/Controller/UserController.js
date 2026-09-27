@@ -59,3 +59,28 @@ exports.loginUser=async(req,res)=>{
         res.status(500).json({message:error.message})
     }
 }
+
+exports.updateUser=async (req,res)=>{
+    try{
+        const {id}=req.params
+        const {name,email,phone}=req.body
+
+        if(!name || !email || !phone){
+            res.status(400).json({message:'All field are required'})
+        }
+
+        const existingUser =await  User.findById(id)
+        if(!existingUser){
+            res.status(404).json({message:"User Not Found"})
+        }
+
+        const user =await User.findByIdAndUpdate(id,{name,email,phone})
+
+        res.status(200).json({
+            message:"User updated sucessfully",
+            user
+        })
+    }catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
