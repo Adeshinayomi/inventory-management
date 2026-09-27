@@ -60,27 +60,38 @@ exports.loginUser=async(req,res)=>{
     }
 }
 
-exports.updateUser=async (req,res)=>{
-    try{
-        const {id}=req.params
-        const {name,email,phone}=req.body
+exports.updateUser = async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
 
-        if(!name || !email || !phone){
-            res.status(400).json({message:'All field are required'})
-        }
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        name,
+        email,
+        phone,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password");
 
-        const existingUser =await  User.findById(id)
-        if(!existingUser){
-            res.status(404).json({message:"User Not Found"})
-        }
-
-        const user =await User.findByIdAndUpdate(id,{name,email,phone})
-
-        res.status(200).json({
-            message:"User updated sucessfully",
-            user
-        })
-    }catch(error){
-        res.status(500).json({message:error.message})
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
-}
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error updating profile",
+    });
+  }
+};
