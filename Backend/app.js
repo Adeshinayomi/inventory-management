@@ -10,7 +10,7 @@ const inventoryRoute = require("./Routes/InventoryRoute.js");
 const DashboardRoute = require('./Routes/DashboardRoute.js')
 const OrderRoute=require('./Routes/OrderRoute.js')
 const PurchaseRoute=require('./Routes/PurchaseRoute.js')
-
+const StoreRoute=require('./Routes/StoreRoute.js')
 app.use(express.json());
 app.use(cors())
 app.use('/users', userRoute);
@@ -19,7 +19,7 @@ app.use('/inventory', inventoryRoute);
 app.use('/orders',OrderRoute)
 app.use('/product',PurchaseRoute)
 app.use('/dashboard', DashboardRoute)
-
+app.use('/store',StoreRoute)
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
