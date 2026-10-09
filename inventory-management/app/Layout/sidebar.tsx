@@ -1,5 +1,5 @@
 "use client"
-import { LayoutDashboard,Warehouse,Box,ChartNoAxesCombined,Settings,LogOutIcon} from "lucide-react"
+import { LayoutDashboard,Warehouse,Box,ChartNoAxesCombined,Settings,LogOutIcon,ShoppingCart} from "lucide-react"
 import Link from "next/link"
 import { LogOut } from "../component/LogOut"
 import  { usePathname } from "next/navigation"
@@ -29,6 +29,11 @@ export function Sidebar(){
                         <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/product" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
                             <Box size={20}/>
                             <Link href="/product" className="self-center text-white">Products</Link>
+                        </li>
+
+                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/sales/create" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                            <ShoppingCart size={20}/>
+                            <Link href="/sales/create" className="self-center text-white">POS</Link>
                         </li>
 
                         <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/sales" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
