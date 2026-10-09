@@ -13,3 +13,9 @@ export async function changePassword(
     body: JSON.stringify(data),
   });
 }
+
+export async function deleteUser() {
+  return apiFetch<Response>("/users/delete-user", {
+    method: "DELETE",
+  });
+}
