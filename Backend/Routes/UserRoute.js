@@ -6,5 +6,6 @@ route.post("/create-user", UserController.createUser);
 route.post("/login", UserController.loginUser);
 route.put("/update-user",authenticateToken, UserController.updateUser);
 route.put("/change-password", authenticateToken, UserController.changePassword);
+route.delete("/delete-user", authenticateToken, UserController.deleteUser);
 
 module.exports = route;
