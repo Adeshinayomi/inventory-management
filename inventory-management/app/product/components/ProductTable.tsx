@@ -3,7 +3,7 @@
 import { Ellipsis, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
+import { deleteProduct } from "@/lib/product";
 import type { Product } from "../../../lib/inventory";
 
 function ProductStatus({ item }: { item: Product }) {
@@ -25,6 +25,21 @@ function ProductStatus({ item }: { item: Product }) {
 function ProductTableRow({ item }: { item:Product}) {
   const [open, setOpen] = useState(false);
 
+    const delete_product= async ()=>{
+      try{
+        const response = await deleteProduct(item.sku)
+
+        if(!response.ok){
+          console.log("product deleted successfully")
+        }else{
+          console.error("failed to delete product")
+        }
+
+        window.location.reload()
+      }catch(error){
+        console.error("Error deleting product:", error);
+      }
+    }
   return (
     <tr className="border-b border-border">
       <td className="flex items-center text-left text-sm py-2">
@@ -88,7 +103,7 @@ function ProductTableRow({ item }: { item:Product}) {
             <button
               onClick={() => {
                 setOpen(false);
-                // Delete logic will go here
+                delete_product()
               }}
               className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
             >

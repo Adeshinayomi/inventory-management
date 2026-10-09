@@ -44,3 +44,8 @@ export function getProduct(sku: string) {
 export function updateProduct(sku: string) {
   return apiFetch<{product:Product}>(`/products/update/${sku}`);
 }
+export function deleteProduct(sku: string){
+  return apiFetch<Response>(`/products/delete/${sku}`,{
+    method: "DELETE",
+  })
+} 
