@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link";
-import {ChevronRight,Briefcase} from "lucide-react";
+import {Briefcase} from "lucide-react";
 import { useState,useEffect } from "react";
 import {type Sales,getTotalSales } from "@/lib/sales";
 import { formateDate } from "@/lib/utils";
@@ -60,7 +60,6 @@ export function SalesTable() {
                         <td className={`text-center text-sm py-4`}>
                             {sale.paymentMethod}
                         </td>
-                        <td className="py-2"><ChevronRight size={16} className="inline-block ml-1 text-black" /></td>
                     </tr>
                 ))}
             </tbody>

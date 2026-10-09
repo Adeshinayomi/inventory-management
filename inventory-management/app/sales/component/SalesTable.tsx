@@ -18,7 +18,13 @@ function SalesTableRow({
   isOpen: boolean;
   onToggle: () => void;
 }) {
-  const firstProduct = item.items[0]?.product;
+
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    maximumFractionDigits: 2,
+}).format(amount);
 
   return (
     <>
@@ -42,7 +48,7 @@ function SalesTableRow({
         </td>
 
         <td className="text-center text-sm py-3">
-          ${item.totalAmount}
+          {formatCurrency(item.totalAmount)}
         </td>
 
         <td className="text-center text-sm py-3">
@@ -103,7 +109,7 @@ function SalesTableRow({
                     </div>
 
                     <div className="text-sm">
-                      ${orderItem.totalAmount}
+                      {formatCurrency(orderItem.totalAmount)}
                     </div>
                   </div>
                 ))}
@@ -119,7 +125,7 @@ function SalesTableRow({
               <div className="flex justify-between text-sm">
                 <span>Total</span>
                 <span className="font-semibold">
-                  ${item.totalAmount}
+                  {formatCurrency(item.totalAmount)}
                 </span>
               </div>
             </div>
