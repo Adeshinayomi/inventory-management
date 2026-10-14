@@ -1,86 +1,77 @@
 const Store = require("../Models/Store");
+const User = require("../Models/User");
+const bcrypt = require('bcryptjs')
+exports.registerStore = async (req, res) => {
+  try{
+    const {storeName, storeAddress, storeEmail, storePhone,name,email,password,phone} = req.body;
 
-// Create store
-exports.createStore = async (req, res) => {
-  try {
-    const {
-      name,
-      address,
-      email,
-      phone,
-    } = req.body;
-
-    // Validate fields
-    if (!name || !address || !email || !phone) {
-      return res.status(400).json({
-        message: "All store fields are required",
-      });
+    if(!storeName || !storeAddress || !storeEmail || !storePhone){
+      return res.status(400).json({message:"All fields are required"});
     }
 
-    // Only allow one store
-    const existingStore = await Store.findOne();
-
-    if (existingStore) {
-      return res.status(400).json({
-        message: "Store has already been created",
-      });
+    const existingStore = await Store.findOne({storeName});
+    if(existingStore){
+      return res.status(400).json({message:"Store already exists"});
     }
 
-    const store = await Store.create({
-      name,
-      address,
-      email,
-      phone,
+    const existingUser = await User.findOne({email});
+    if(existingUser){
+      return res.status(400).json({message:"User with this email already exists"});
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+
+
+    const store = new Store({
+      storeName,
+      storeAddress,
+      storeEmail,
+      storePhone
     });
 
+    await store.save();
+
+    const newUser = await User.create({
+      name,
+      email,
+      phone:Number(phone),
+      password:hashedPassword,
+      role:'owner',
+      store:store._id
+    })
     return res.status(201).json({
-      message: "Store created successfully",
-      store,
+      message: "Store registered successfully",
+      storeName,
+      storeAddress,
+      storeEmail,
+      storePhone,
+      owner: {
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+      }
     });
   } catch (error) {
-    console.error("Create store error:", error);
-
+    console.error("Register store error:", error);
     return res.status(500).json({
-      message: "Error creating store",
+      message: "Error registering store"
     });
   }
 };
 
-// Get store information
-exports.getStore = async (req, res) => {
-  try {
-    const store = await Store.findOne();
 
-    if (!store) {
-      return res.status(404).json({
-        message: "Store information not found",
-      });
-    }
-
-    return res.status(200).json({
-      message: "Store information retrieved successfully",
-      store,
-    });
-  } catch (error) {
-    console.error("Get store error:", error);
-
-    return res.status(500).json({
-      message: "Error getting store information",
-    });
-  }
-};
-
-// Update store information
 exports.updateStore = async (req, res) => {
   try {
     const {
-      name,
-      address,
-      email,
-      phone,
+      storeName,
+      storeAddress,
+      storeEmail,
+      storePhone
     } = req.body;
 
-    if (!name || !address || !email || !phone) {
+    if (!storeName || !storeAddress || !storeEmail || !storePhone) {
       return res.status(400).json({
         message: "All store fields are required",
       });
@@ -94,10 +85,10 @@ exports.updateStore = async (req, res) => {
       });
     }
 
-    store.name = name;
-    store.address = address;
-    store.email = email;
-    store.phone = phone;
+    store.storeName = storeName;
+    store.storeAddress = storeAddress;
+    store.storeEmail = storeEmail;
+    store.storePhone = storePhone;
 
     await store.save();
 

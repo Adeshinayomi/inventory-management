@@ -2,26 +2,26 @@ const mongoose = require("mongoose");
 
 const storeSchema = new mongoose.Schema(
   {
-    name: {
+    storeName: {
       type: String,
       required: true,
       trim: true,
     },
 
-    address: {
+    storeAddress: {
       type: String,
       required: true,
       trim: true,
     },
 
-    email: {
+    storeEmail: {
       type: String,
       required: true,
       trim: true,
       lowercase: true,
     },
 
-    phone: {
+    storePhone: {
       type: String,
       required: true,
       trim: true,
