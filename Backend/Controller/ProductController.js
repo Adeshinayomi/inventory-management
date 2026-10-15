@@ -35,7 +35,8 @@ exports.importDefaultProducts = async (req, res) => {
       category: product.category,
       threshold: 5,
       available: product.stock > 0,
-      image: product.thumbnail
+      image: product.thumbnail,
+      store: storeId
     }));
 
     const savedProducts = await Product.insertMany(products);

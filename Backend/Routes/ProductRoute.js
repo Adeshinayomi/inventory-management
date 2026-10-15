@@ -6,7 +6,7 @@ const authorize= require("../Middleware/role.js").authorize;
 const storeMiddleware = require("../Middleware/validatestore.js");
 
 
-route.post("/importProducts", authenticateToken,authorize(["owner"]), upload.single("image"), ProductController.importDefaultProducts);
+route.post("/importProducts", authenticateToken,authorize(["owner"]),storeMiddleware, upload.single("image"), ProductController.importDefaultProducts);
 
 route.post("/create", authenticateToken,authorize(["owner"]),storeMiddleware, upload.single("image"), ProductController.createProduct);
 
