@@ -30,7 +30,10 @@ exports.createOrder = async (req, res) => {
         });
       }
 
-      const productExists = await Product.findById(product, { store: storeId });
+      const productExists = await Product.findOne({
+        _id: product,
+        store: req.storeId,
+      });
 
       if (!productExists) {
         return res.status(404).json({
