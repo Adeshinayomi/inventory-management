@@ -9,6 +9,28 @@ type userProp ={
 }
 export function Header(){
   const [user, setUser] = useState<userProp | null>(null);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "light" || storedTheme === "dark") {
+      setTheme(storedTheme);
+    }
+  }, []);
+  function toggleTheme() {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+  }
+  function applyTheme(theme: "light" | "dark") {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }
+
   useEffect(() => { 
     const storedUser = localStorage.getItem("user"); 
     if (storedUser) {
@@ -24,8 +46,8 @@ export function Header(){
 
             <div className="flex items-center gap-5">
                 <div className="flex gap-2">
-                    <Sun />
-                    <Moon/>
+                    <Sun className={`cursor-pointer ${theme === "light" ? "text-gray-800" : "text-gray-400"}`} onClick={toggleTheme} />
+                    <Moon className={`cursor-pointer ${theme === "dark" ? "text-black" : "text-gray-400"}`} onClick={toggleTheme} />
                 </div>
                 <div className="flex items-center gap-2 ">
                     <div className="grid">
