@@ -37,6 +37,11 @@ const productSchema=new mongoose.Schema({
         type:String,
         Enum:['Electronics','Clothing','Books','Gadgets','Foods','Other'],
         required:true
+    },
+    store:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Store',
+        required:true 
     }
 },
 {
