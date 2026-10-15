@@ -9,8 +9,8 @@ const {
 
 const authMiddleware = require("../Middleware/Auth");
 const authorize= require("../Middleware/role.js").authorize;
-
+const storeMiddleware = require("../Middleware/validatestore.js");
 router.post('/register', registerStore);
-router.put('/update', authMiddleware,authorize(["owner","storekeeper"]), updateStore);
+router.put('/update', authMiddleware,authorize(["owner","storekeeper"]),storeMiddleware, updateStore);
 
 module.exports = router;

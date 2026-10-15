@@ -5,7 +5,8 @@ const generateId = require("../Utils/generateId.js");
 
 exports.importDefaultProducts = async (req, res) => {
   try {
-    const existingProducts = await Product.countDocuments();
+    const storeId = req.storeId;
+    const existingProducts = await Product.countDocuments({store:storeId});
 
     if (existingProducts > 0) {
       return res.status(400).json({

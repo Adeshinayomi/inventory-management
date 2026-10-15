@@ -71,13 +71,14 @@ exports.updateStore = async (req, res) => {
       storePhone
     } = req.body;
 
+    const storeId = req.storeId;
     if (!storeName || !storeAddress || !storeEmail || !storePhone) {
       return res.status(400).json({
         message: "All store fields are required",
       });
     }
 
-    const store = await Store.findOne();
+    const store = await Store.findOne({ _id: storeId });
 
     if (!store) {
       return res.status(404).json({
