@@ -3,10 +3,12 @@ const Product = require("../Models/Product.js");
 
 exports.getLowStockProducts = async (req, res) => {
   try {
+    const storeId = req.storeId; // Get the store ID from the request object
     const products = await Inventory.find({
       $expr: {
         $lte: ["$stock", "$threshold"],
       },
+      store: storeId
     });
 
     res.status(200).json({
@@ -21,7 +23,11 @@ exports.getLowStockProducts = async (req, res) => {
 
 exports.getInventoryStats = async (req, res) => {
   try {
+    const storeId = req.storeId; 
     const totalUnitsResult = await Inventory.aggregate([
+      { 
+        $match: { store: storeId } 
+      },
       {
         $group: {
           _id: null,
@@ -36,13 +42,18 @@ exports.getInventoryStats = async (req, res) => {
       $expr: {
         $lt: ["$stock", "$threshold"],
       },
+      store: storeId
     });
 
     const outOfStock = await Inventory.find({
-        stock:0
+        stock:0,
+        store: storeId
     })
 
     const inventoryValueResult = await Inventory.aggregate([
+      {
+        $match: { store: storeId }
+      },
       {
         $group: {
           _id: null,
@@ -72,10 +83,10 @@ exports.getInventoryStats = async (req, res) => {
 
 exports.restockProduct = async (req, res) => {
   try {
+    const storeId = req.storeId;
     const { sku } = req.params;
     const { quantity } = req.body;
 
-    // Validate quantity exists
     if (quantity === undefined || quantity === null) {
       return res.status(400).json({
         success: false,
@@ -83,10 +94,8 @@ exports.restockProduct = async (req, res) => {
       });
     }
 
-    // Convert to number
     const restockQuantity = Number(quantity);
 
-    // Validate quantity
     if (!Number.isFinite(restockQuantity) || restockQuantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -95,7 +104,7 @@ exports.restockProduct = async (req, res) => {
     }
 
     // Find product
-    const product = await Product.findOne({ sku });
+    const product = await Product.findOne({ sku, store: storeId });
 
     if (!product) {
       return res.status(404).json({
