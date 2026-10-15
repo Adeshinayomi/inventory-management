@@ -33,7 +33,7 @@ export function Header(){
                         <p className="text-sm text-text-muted">{user?.role}</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-primary flex justify-center items-center text-surface">
-                        <h1 className="font-bold text-lg text-center">B</h1>
+                        <h1 className="font-bold text-lg text-center">{user?.name.charAt(0)}</h1>
                     </div>
                 </div>
             </div>
