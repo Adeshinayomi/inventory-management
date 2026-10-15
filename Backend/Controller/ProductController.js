@@ -147,8 +147,9 @@ exports.getProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
+        const storeId = req.storeId;
         const { name, description, price, category, threshold } = req.body;
-        const product = await Product.findOne({ sku: req.params.sku });
+        const product = await Product.findOne({ sku: req.params.sku , store:storeId});
 
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
@@ -163,7 +164,8 @@ exports.updateProduct = async (req, res) => {
 }
 exports.getAllCategories = async (req,res)=>{
   try {
-    const categories = await Product.distinct("category");
+    const storeId = req.storeId;
+    const categories = await Product.distinct("category", { store: storeId });
 
     res.status(200).json({
       categories,
@@ -179,7 +181,8 @@ exports.getAllCategories = async (req,res)=>{
 }
 exports.deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findOneAndDelete({ sku: req.params.sku });
+        const storeId = req.storeId;
+        const product = await Product.findOneAndDelete({ sku: req.params.sku, store: storeId });
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
