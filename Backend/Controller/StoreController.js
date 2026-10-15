@@ -105,3 +105,25 @@ exports.updateStore = async (req, res) => {
     });
   }
 };
+
+exports.getStoreInfo = async (req, res) => {
+  try {
+    const storeId = req.storeId;
+    const store = await Store.findById(storeId);
+    
+    if (!store) {
+      return res.status(404).json({
+        message: "Store not found"
+      });
+    }
+
+    return res.status(200).json({
+      store
+    });
+  } catch (error) {
+    console.error("Get store info error:", error);
+    return res.status(500).json({
+      message: "Error fetching store information"
+    });
+  }
+};
