@@ -59,6 +59,8 @@ exports.importDefaultProducts = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
+
+    const storeId = req.storeId; 
     const { name, description, price, stock, category, threshold } = req.body;
 
     if (!name || !description || !price || !stock || !category) {
@@ -100,7 +102,8 @@ exports.createProduct = async (req, res) => {
       stock:Number(stock),
       threshold,
       category,
-      image: result.secure_url
+      image: result.secure_url,
+      store:storeId
     });
 
     const emailSubject = "New Product Added";
@@ -118,12 +121,17 @@ exports.createProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const storeId = req.storeId;
+
+    const products = await Product.find({
+      store:storeId
+    });
     res.status(200).json({ products });
   } catch (error) {
     res.status(500).json({ message: "Error fetching products" });
   }
 }
+
 
 exports.getProductById = async (req, res) => { 
     try{
