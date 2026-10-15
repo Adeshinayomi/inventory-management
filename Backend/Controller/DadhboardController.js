@@ -2,13 +2,19 @@ const Product = require("../Models/Product.js");
 const Sale = require("../Models/Order.js")
 exports.getDashboardStats = async (req,res)=>{
   try{
-
+    const storeId = req.storeId;
     const lowStocks = await Product.find({
           $expr: {
               $lte: ["$stock", "$threshold"]
-          }
+          },
+          store:storeId
     }).countDocuments();
     const totalSales = await Sale.aggregate([
+        {
+            $match:{
+                store:storeId
+            }
+        },
         {
         $group: {
             _id: null,
@@ -19,6 +25,11 @@ exports.getDashboardStats = async (req,res)=>{
         },
     ]);
     const inventoryValue = await Product.aggregate([
+        {
+            $match:{
+                store:storeId
+            }
+        },
         {
             $group: {
                 _id: null,
@@ -31,6 +42,11 @@ exports.getDashboardStats = async (req,res)=>{
         }
     ]);
     const totalUnit = await Product.aggregate([
+        {
+            $match:{
+                store:storeId
+            }
+        },
         {
             $group: {
                 _id: null,
