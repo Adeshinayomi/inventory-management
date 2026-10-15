@@ -4,6 +4,7 @@ const generateId = require("../Utils/generateId.js");
 
 exports.createOrder = async (req, res) => {
   try {
+    const storeId = req.storeId; 
     const { items, paymentMethod } = req.body;
 
     if (
@@ -29,7 +30,7 @@ exports.createOrder = async (req, res) => {
         });
       }
 
-      const productExists = await Product.findById(product);
+      const productExists = await Product.findById(product, { store: storeId });
 
       if (!productExists) {
         return res.status(404).json({
@@ -67,7 +68,8 @@ exports.createOrder = async (req, res) => {
       items: orderItems,
       totalAmount,
       paymentMethod,
-      soldBy: req.user.id
+      soldBy: req.user.id,
+      store: storeId
     });
 
     res.status(201).json({
@@ -88,7 +90,8 @@ exports.createOrder = async (req, res) => {
 
 exports.getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find()
+    const storeId = req.storeId;
+    const orders = await Order.find({ store: storeId })
       .populate("items.product", "name sku price")
       .populate("soldBy","name email")
       .sort({ createdAt: -1 });
@@ -107,8 +110,10 @@ exports.getAllOrders = async (req, res) => {
 
 exports.getOrderById = async (req, res) => {
   try {
+    const storeId = req.storeId;
     const order = await Order.findOne({
-      orderId: req.params.orderId
+      orderId: req.params.orderId,
+      store: storeId
     })
       .populate("items.product", "name sku price")
       .populate("soldBy", "name email");
@@ -132,6 +137,7 @@ exports.getOrderById = async (req, res) => {
 
 exports.getOrders = async (req, res) => {
   try {
+    const storeId = req.storeId;
     const { startDate, endDate } = req.query;
 
     const filter = {};
@@ -172,7 +178,7 @@ exports.getOrders = async (req, res) => {
       };
     }
 
-    const orders = await Order.find(filter)
+    const orders = await Order.find({ ...filter, store: storeId })
       .populate("items.product")
       .populate("soldBy", "firstName lastName email")
       .sort({ orderDate: -1 });
@@ -196,6 +202,11 @@ exports.getOrdersStats =  async (req,res)=>{
   try{
     const totalSales = await Order.aggregate([
       {
+        $match: {
+          store: req.storeId
+        }
+      },
+      {
         $group: {
           _id: null,
           totalSales: {
@@ -204,8 +215,13 @@ exports.getOrdersStats =  async (req,res)=>{
         },
       },
     ]);
-    const totalOrders = await Order.find().countDocuments();
+    const totalOrders = await Order.find({ store: req.storeId }).countDocuments();
     const itemsSold = await Order.aggregate([
+      {
+        $match: {
+          store: req.storeId
+        }
+      },
       {
         $unwind: "$items"
       },
@@ -271,6 +287,7 @@ const getDateFilter = (startDate, endDate) => {
 
 exports.getSalesStats = async (req, res) => {
   try {
+    const storeId = req.storeId;
     const { startDate, endDate } = req.query;
 
     const dateFilter = getDateFilter(
@@ -284,7 +301,10 @@ exports.getSalesStats = async (req, res) => {
 
     const salesResult = await Order.aggregate([
       {
-        $match: dateFilter,
+        $match: {
+          ...dateFilter,
+          store: storeId
+        }
       },
       {
         $group: {
@@ -305,7 +325,7 @@ exports.getSalesStats = async (req, res) => {
     // =========================
 
     const totalOrders = await Order.countDocuments(
-      dateFilter
+      { ...dateFilter, store: storeId }
     );
 
 
@@ -315,7 +335,7 @@ exports.getSalesStats = async (req, res) => {
 
     const itemsSoldResult = await Order.aggregate([
       {
-        $match: dateFilter,
+        $match: { ...dateFilter, store: storeId },
       },
       {
         $unwind: "$items",
@@ -363,8 +383,14 @@ exports.getSalesStats = async (req, res) => {
 
 exports.getTopSellingCategories = async (req, res) => {
   try {
+    const storeId = req.storeId;
     const categories = await Order.aggregate([
       // 1. Break each order into individual items
+      {
+        $match: {
+          store: storeId
+        }
+      },
       {
         $unwind: "$items",
       },
@@ -428,6 +454,7 @@ exports.getTopSellingCategories = async (req, res) => {
 
 exports.getMonthlySales = async (req, res) => {
   try {
+    const storeId = req.storeId;
     const currentYear = new Date().getFullYear();
 
     const sales = await Order.aggregate([
@@ -438,6 +465,7 @@ exports.getMonthlySales = async (req, res) => {
             $gte: new Date(`${currentYear}-01-01`),
             $lt: new Date(`${currentYear + 1}-01-01`),
           },
+          store: storeId
         },
       },
 
