@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import { getStore, updateStore } from "@/lib/store";
 
 type StoreForm = {
-  name: string;
-  address: string;
-  email: string;
-  phone: string;
+  storeName: string;
+  storeAddress: string;
+  storeEmail: string;
+  storePhone: string;
 };
 
 export function StoreInfo() {
   const [store, setStore] = useState<StoreForm>({
-    name: "",
-    address: "",
-    email: "",
-    phone: "",
+    storeName: "",
+    storeAddress: "",
+    storeEmail: "",
+    storePhone: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -29,10 +29,10 @@ export function StoreInfo() {
         const data = await getStore();
 
         setStore({
-          name: data.store.name || "",
-          address: data.store.address || "",
-          email: data.store.email || "",
-          phone: data.store.phone || "",
+          storeName: data.store.storeName || "",
+          storeAddress: data.store.storeAddress || "",
+          storeEmail: data.store.storeEmail || "",
+          storePhone: data.store.storePhone || "",
         });
       } catch (error) {
         setError(
@@ -128,9 +128,9 @@ export function StoreInfo() {
 
           <input
             id="name"
-            name="name"
+            name="storeName"
             type="text"
-            value={store.name}
+            value={store.storeName}
             onChange={handleChange}
             placeholder="Inventory"
             className="px-2 py-2 border border-border rounded-md text-text-secondary text-sm bg-background"
@@ -139,15 +139,15 @@ export function StoreInfo() {
 
         {/* Address */}
         <div className="grid gap-2">
-          <label htmlFor="address">
+          <label htmlFor="storeAddress">
             Store Address
           </label>
 
           <input
-            id="address"
-            name="address"
+            id="storeAddress"
+            name="storeAddress"
             type="text"
-            value={store.address}
+            value={store.storeAddress}
             onChange={handleChange}
             placeholder="94 Mba Street, Ajegunle"
             className="px-2 py-2 border border-border text-text-secondary text-sm rounded-md bg-background"
@@ -156,15 +156,15 @@ export function StoreInfo() {
 
         {/* Email */}
         <div className="grid gap-2">
-          <label htmlFor="email">
+          <label htmlFor="storeEmail">
             Store Email
           </label>
 
           <input
-            id="email"
-            name="email"
+            id="storeEmail"
+            name="storeEmail"
             type="email"
-            value={store.email}
+            value={store.storeEmail}
             onChange={handleChange}
             placeholder="inventory@gmail.com"
             className="px-2 py-2 border border-border text-text-secondary text-sm rounded-md bg-background"
@@ -173,15 +173,15 @@ export function StoreInfo() {
 
         {/* Phone */}
         <div className="grid gap-2">
-          <label htmlFor="phone">
-            Phone
+          <label htmlFor="storePhone">
+            Store Phone
           </label>
 
           <input
-            id="phone"
-            name="phone"
+            id="storePhone"
+            name="storePhone"
             type="tel"
-            value={store.phone}
+            value={store.storePhone}
             onChange={handleChange}
             placeholder="+234 9062433"
             className="px-2 py-2 border border-border text-text-secondary text-sm rounded-md bg-background"
