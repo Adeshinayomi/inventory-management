@@ -3,16 +3,44 @@ import { LayoutDashboard,Warehouse,Box,ChartNoAxesCombined,Settings,LogOutIcon,S
 import Link from "next/link"
 import { LogOut } from "../component/LogOut"
 import  { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState,useEffect} from "react"
+import { getStore} from "@/lib/store"
+
+type storeprop = {
+  _id: string;
+  storeName: string;
+  storeAddress: string;
+  storeEmail: string;
+  storePhone: string;
+}
 export function Sidebar(){
+    const [store, setStore] = useState<storeprop | null>(null)
     const pathname = usePathname()
     const [isModalOpen, setIsModalOpen] = useState(false)
+
+    useEffect(() => {
+        getStore()
+        .then((data) => {
+            setStore(data.store)
+        }).catch((err) => {
+            console.log(err.message)
+        });
+    }, []);   
+    
+    const separatedWords = store?.storeName?.split(' ')
+
+    const firstWord = separatedWords ? separatedWords[0] : '';
+    const remainingWords = separatedWords ? separatedWords.slice(1).join(' ') : '';
     return(
         <>
             <nav className="w-1/5 fixed min-h-screen bg-sidebar p-5 grid gap-10 text-text-on-primary content-between">
                 <div className="grid gap-10">
                     <h1 className="text-xl font-medium">
-                        <Link href="/" className="text-primary">IN</Link>VENTORY
+                        <Link href="/" className="flex gap-2"> 
+                           <span className="text-primary">{firstWord}</span>
+
+                           <span>{remainingWords}</span>
+                        </Link>
                     </h1>
 
                     <ul className="w-5/6 grid gap-3 self-stretch h-full text-sm">
