@@ -6,53 +6,90 @@ import { ProductFilters } from "./components/ProductFilter";
 import { ProductHeader } from "./components/ProductHeader";
 import { ProductTable } from "./components/ProductTable";
 import { getInventoryProducts, type Product } from "@/lib/inventory";
-import { useRouter,useSearchParams} from "next/navigation";
-
-
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ProductPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const searchQuery = searchParams.get("search") ?? "";
 
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [loading, setLoading] = useState(true);
 
-  searchParams?.get("search") && useEffect(() => {
-    const query = searchParams.get("search") || "";
-    setSearch(query);
-  }, [searchParams]);
-
+  // Fetch products whenever the URL search query changes.
   useEffect(() => {
-    getInventoryProducts()
-    .then((data) => {
-        setProducts(data.products)
-    }).catch((err) => {
-        setError(err.message);
-        router.replace('/login')
-    });
-  }, [searchQuery]);
+    let cancelled = false;
 
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await getInventoryProducts(searchQuery);
+
+        if (!cancelled) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : "Failed to fetch products";
+
+          setError(message);
+
+          // Redirect only when the request indicates an authentication failure.
+          if (
+            message.toLowerCase().includes("token") ||
+            message.toLowerCase().includes("unauthorized") ||
+            message.toLowerCase().includes("access denied")
+          ) {
+            router.replace("/login");
+          }
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchQuery, router]);
+
+  // Apply local search and category filtering to the fetched products.
   const filteredProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
     return products.filter((product) => {
       const matchesSearch =
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.sku.toLowerCase().includes(search.toLowerCase());
+        !query ||
+        product.name?.toLowerCase().includes(query) ||
+        product.sku?.toLowerCase().includes(query);
 
-      const matchesStatus =
+      const matchesCategory =
         !status ||
-        (status === product.category);
+        status === "all" ||
+        product.category === status;
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesCategory;
     });
   }, [products, search, status]);
 
   return (
-    <section className="grid gap-5 px-5 mt-8">
-      <ProductHeader/>
-      <div className="grid gap-5 w-full bg-surface border border-border rounded-md p-4">
+    <section className="mt-8 grid gap-5 px-5">
+      <ProductHeader />
+
+      <div className="grid w-full gap-5 rounded-md border border-border bg-surface p-4">
         <ProductFilters
           search={search}
           status={status}
@@ -66,22 +103,35 @@ export default function ProductPage() {
           </p>
         )}
 
-        <ProductTable items={filteredProducts} />
-
-        <div className="flex justify-between text-text-secondary">
-          <p className="font-medium">
-            Showing {filteredProducts.length} products
+        {loading ? (
+          <p className="py-6 text-center text-text-secondary">
+            Loading products...
           </p>
-          <div className="flex gap-2">
-            <button disabled>
-              <ChevronLeft />
-            </button>
-            <span className="rounded-md bg-primary px-2 text-surface">1</span>
-            <button disabled>
-              <ChevronRight />
-            </button>
-          </div>
-        </div>
+        ) : (
+          <>
+            <ProductTable items={filteredProducts} />
+
+            <div className="flex justify-between text-text-secondary">
+              <p className="font-medium">
+                Showing {filteredProducts.length} products
+              </p>
+
+              <div className="flex gap-2">
+                <button type="button" disabled aria-label="Previous page">
+                  <ChevronLeft />
+                </button>
+
+                <span className="rounded-md bg-primary px-2 text-surface">
+                  1
+                </span>
+
+                <button type="button" disabled aria-label="Next page">
+                  <ChevronRight />
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

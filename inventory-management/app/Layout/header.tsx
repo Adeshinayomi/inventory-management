@@ -20,7 +20,10 @@ export function Header(){
 
     const query = searchQuery.trim();
 
-    if (!query) return;
+    if (!query) {
+      router.push("/product");
+      return;
+    }
 
     router.push(`/product?search=${encodeURIComponent(query)}`);
   }
