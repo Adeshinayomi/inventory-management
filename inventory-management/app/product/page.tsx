@@ -6,14 +6,24 @@ import { ProductFilters } from "./components/ProductFilter";
 import { ProductHeader } from "./components/ProductHeader";
 import { ProductTable } from "./components/ProductTable";
 import { getInventoryProducts, type Product } from "@/lib/inventory";
-import { useRouter } from "next/navigation";
+import { useRouter,useSearchParams} from "next/navigation";
+
+
 
 export default function ProductPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  searchParams?.get("search") && useEffect(() => {
+    const query = searchParams.get("search") || "";
+    setSearch(query);
+  }, [searchParams]);
 
   useEffect(() => {
     getInventoryProducts()
@@ -23,7 +33,7 @@ export default function ProductPage() {
         setError(err.message);
         router.replace('/login')
     });
-  }, []);
+  }, [searchQuery]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {

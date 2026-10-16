@@ -22,8 +22,8 @@ export type InventoryStats ={
 export function getCategories() {
   return apiFetch<{categories:string[]}>("/products/categories");
 }
-export function getInventoryProducts() {
-  return apiFetch<{ products: Product[] }>("/products/all-products");
+export function getInventoryProducts(search:string = '') {
+  return apiFetch<{ products: Product[] }>(`/products/all-products?search=${search}`);
 }
 export function getInventoryStats(){
   return apiFetch<InventoryStats>("/inventory/stats")
