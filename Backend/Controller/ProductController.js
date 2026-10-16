@@ -124,10 +124,13 @@ exports.createProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const storeId = req.storeId;
+    const searchQuery = req.query.search || '';
+    const filter = {
+      store: storeId,
+      name: { $regex: searchQuery, $options: 'i' }
+    };
 
-    const products = await Product.find({
-      store:storeId
-    });
+    const products = await Product.find(filter).sort({ createdAt: -1 });
     res.status(200).json({ products });
   } catch (error) {
     res.status(500).json({ message: "Error fetching products" });
