@@ -12,9 +12,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <main className="flex">
+    <main className=" md:flex">
       <Sidebar />
-      <section className="grid w-4/5 ml-auto">
+      <section className="grid w-full md:w-4/5 ml-auto">
         <Header />
         {children}
       </section>

@@ -33,7 +33,7 @@ export function Sidebar(){
     const remainingWords = separatedWords ? separatedWords.slice(1).join(' ') : '';
     return(
         <>
-            <nav className="w-1/5 fixed min-h-screen bg-sidebar p-5 grid gap-10 text-text-on-primary content-between">
+            <nav className="hidden md:block md:w-1/5 fixed min-h-screen bg-sidebar p-5 grid gap-10 text-text-on-primary content-between">
                 <div className="grid gap-10">
                     <h1 className="text-xl font-medium">
                         <Link href="/" className="flex gap-2"> 
