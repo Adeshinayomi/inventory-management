@@ -49,12 +49,12 @@ export default function Home() {
           here is what is happening in your store today.
         </p>
       </div>
-      <div className="flex justify-between">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-0 justify-between">
         {Object.entries(stats).map(([stat, value]) => (
           <StatsCard key={stat} stat={stat} value={value} />
         ))}
       </div>
-      <div className="flex gap-2 justify-between">
+      <div className=" flex flex-col md:flex-row gap-2 justify-between">
         <div className="flex items-center">
           <TopSellingCategory/>
         </div>
@@ -63,7 +63,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="w-full flex flex-col md:flex-row gap-2">
         <SalesTable />
         <LowStocks />
       </div>

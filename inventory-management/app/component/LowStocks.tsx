@@ -16,7 +16,7 @@ export function LowStocks() {
 
    return (
     //low stocks table
-    <div className="border border-border rounded-md p-4 w-[45%]">
+    <div className="border border-border rounded-md p-4 w-full md:w-[45%]">
         <div className="flex justify-between items-center mb-4 pr-4">
             <h1 className="text-xl font-bold">Low Stocks</h1>
             <button className="text-sm text-muted-foreground hover:text-primary cursor-pointer">

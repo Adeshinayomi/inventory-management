@@ -88,9 +88,9 @@ export function StatsCard({
 
 
   return (
-    <div className="w-[240px] rounded-md border border-border bg-surface px-4 py-3">
+    <div className="min-w-[240px] rounded-md border border-border bg-surface px-4 py-3">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div className="flex md:flex-row md:items-center gap-3 flex-col items-start">
         <div className="rounded-md bg-success-light p-2">
           <Icon
             size={20}
@@ -109,9 +109,11 @@ export function StatsCard({
         {Number(value).toLocaleString()}
       </h2>
 
-      <div className="mt-5 flex items-center gap-2 text-sm text-primary">
-        <ArrowUp size={18} />
-        <span>25.5%</span>
+      <div className="w-full justify-between mt-5 flex items-center gap-2 text-sm text-primary md:justify-start">
+        <div className="flex gap-2">
+          <ArrowUp size={18} />
+          <span>25.5%</span>
+        </div>
         <span className="text-text-secondary">vs last week</span>
       </div>
     </div>

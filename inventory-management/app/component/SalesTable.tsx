@@ -18,7 +18,7 @@ export function SalesTable() {
 
     if(recentSales.length === 0){
         return(
-            <div className="border border-border grid rounded-md p-4 w-[55%]">
+            <div className="border border-border grid rounded-md p-4 w-full md:w-[55%]">
                 <h1 className="text-xl font-bold">Recent Sales</h1>
                 <p className="text-lg text-text-muted text-center">
                     Nothing to see here.
@@ -29,7 +29,7 @@ export function SalesTable() {
 
 
   return (
-    <div className="border border-border rounded-md p-4 w-[55%]">
+    <div className="border border-border rounded-md p-4 w-full md:w-[55%]">
         <div className="flex justify-between items-center mb-4 pr-4">
             <h1 className="text-xl font-bold">Recent Sales</h1>
 
@@ -37,14 +37,14 @@ export function SalesTable() {
                 View All
             </Link>
         </div>
-        <table className="table w-full">
+        <table className="table w-full overflow-x-auto">
             <thead className="text-muted-foreground">
                 <tr className="border-b border-border">
-                    <th className="text-left text-md w-[150px]">Sale ID</th>
-                    <th className="text-left text-md w-[200px]">Sold By</th>
-                    <th className="text-left text-md w-[150px]">Date</th>
-                    <th className="text-center text-md w-[100px] ">Amount</th>
-                    <th className="text-center text-md w-[150px]">Payment Method</th>
+                    <th className="text-left text-md md:w-[150px]">Sale ID</th>
+                    <th className="text-left text-md md:w-[200px]">Sold By</th>
+                    <th className="text-left text-md md:w-[150px]">Date</th>
+                    <th className="text-center text-md md:w-[100px] ">Amount</th>
+                    <th className="text-center text-md md:w-[150px]">Payment Method</th>
                 </tr>
             </thead>
             <tbody>
