@@ -5,7 +5,7 @@ import { DeleteAccount } from "./component/DeleteAccount"
 function Settings(){
     return(
         <section className="px-5 mt-8 grid gap-5">
-            <div className="flex justify-between gap-2">
+            <div className="flex flex-col md:flex-row md:justify-between gap-2">
                 <ProfileInfo />
                 <StoreInfo />
             </div>

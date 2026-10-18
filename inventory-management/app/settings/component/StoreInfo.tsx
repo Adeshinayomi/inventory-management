@@ -104,9 +104,9 @@ export function StoreInfo() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid bg-surface px-4 py-2 rounded-md gap-7 w-1/2"
+      className="w-full grid bg-surface px-4 py-2 rounded-md gap-7 w-1/2"
     >
-      <div className="flex justify-between items-center">
+      <div className="flex flex justify-between items-center">
         <div className="grid gap-2">
           <h1 className="text-xl font-bold">
             Store Information
@@ -118,7 +118,7 @@ export function StoreInfo() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-2 gap-5">
 
         {/* Store Name */}
         <div className="grid gap-2">

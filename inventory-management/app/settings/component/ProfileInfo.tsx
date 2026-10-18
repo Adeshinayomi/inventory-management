@@ -110,7 +110,7 @@ export function ProfileInfo() {
     }
 
   return (
-    <div className="grid bg-surface px-4 py-2 rounded-md gap-7 w-1/2">
+    <div className="w-full grid bg-surface px-4 py-2 rounded-md gap-7 w-1/2">
 
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -141,7 +141,7 @@ export function ProfileInfo() {
         onSubmit={handleSubmit}
         className="grid gap-7"
       >
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-5">
 
           {/* Name */}
           <div className="grid gap-2">

@@ -16,12 +16,12 @@ export function DeleteAccount(){
     }
     return(
         <div>
-            <div className="bg-surface p-4 flex justify-between w-2/3 rounded-md border border-border">
+            <div className="w-full bg-surface p-4 flex flex-col md:flex-row md:justify-between w-2/3 rounded-md border border-border gap-5">
                 <div className="flex items-center gap-2">
                     <Trash size={35} className="p-2 rounded-md bg-danger/25 text-danger"/>
                     <div className="grid">
                         <h1 className="font-medium">Delete Account</h1>
-                        <p className="text-sm tex-text-muted">Permanently delete your account and all data </p>
+                        <p className="text-sm text-text-muted">Permanently delete your account and all data </p>
                     </div>
                 </div>
 
