@@ -16,7 +16,7 @@ export function DeleteAccount(){
     }
     return(
         <div>
-            <div className="w-full bg-surface p-4 flex flex-col md:flex-row md:justify-between w-2/3 rounded-md border border-border gap-5">
+            <div className="w-full bg-surface p-4 flex flex-col md:flex-row md:justify-between md:w-2/3 rounded-md border border-border gap-5">
                 <div className="flex items-center gap-2">
                     <Trash size={35} className="p-2 rounded-md bg-danger/25 text-danger"/>
                     <div className="grid">

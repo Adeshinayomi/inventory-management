@@ -157,7 +157,7 @@ export function SecurityAndPrefences() {
     }
   return (
     <>
-      <div className="w-full grid gap-5 bg-surface px-4 py-2 rounded-md border border-border w-1/2">
+      <div className="w-full md:w-fit grid gap-5 bg-surface px-4 py-2 rounded-md border border-border w-1/2">
 
         {/* Header */}
         <div className="flex justify-between items-center">
