@@ -23,7 +23,7 @@ export function SalesStats(){
       }, []);
     
     return(
-        <div className="flex justify-between">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-0 justify-between">
             {Object.entries(stats).map(([stat, value]) => (
             <StatsCard key={stat} stat={stat} value={value} />
             ))}
