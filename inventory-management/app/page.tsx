@@ -49,7 +49,7 @@ export default function Home() {
           here is what is happening in your store today.
         </p>
       </div>
-      <div className="flex flex-col md:flex-row gap-2 md:gap-0 justify-between">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-0 md:justify-between">
         {Object.entries(stats).map(([stat, value]) => (
           <StatsCard key={stat} stat={stat} value={value} />
         ))}
