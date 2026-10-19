@@ -13,7 +13,11 @@ type storeprop = {
   storeEmail: string;
   storePhone: string;
 }
-export function Sidebar(){
+type sidebarProp={
+  isOpen:boolean;
+  toggleSidebar:()=>void
+}
+export function Sidebar({isOpen,toggleSidebar}:sidebarProp){
     const [store, setStore] = useState<storeprop | null>(null)
     const pathname = usePathname()
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -31,11 +35,15 @@ export function Sidebar(){
 
     const firstWord = separatedWords ? separatedWords[0] : '';
     const remainingWords = separatedWords ? separatedWords.slice(1).join(' ') : '';
+
+
     return(
         <>
-            <nav className="hidden md:grid w-1/5 fixed min-h-screen bg-sidebar p-5 grid gap-10 text-text-on-primary content-between">
+            <nav className={`${isOpen?'':'hidden'} w-full md:grid md:w-1/5 fixed min-h-screen bg-sidebar p-5 grid gap-10 text-text-on-primary content-between z-99`}>
                 <div className="grid gap-10">
-                    <h1 className="text-xl font-medium">
+                    <h1 className="text-xl font-medium" onClick={()=>{
+                        toggleSidebar()
+                    }}>
                         <Link href="/" className="flex gap-2"> 
                            <span className="text-primary">{firstWord}</span>
 
@@ -44,27 +52,37 @@ export function Sidebar(){
                     </h1>
 
                     <ul className="w-5/6 grid gap-3 self-stretch h-full text-sm">
-                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/" ? "bg-sidebar-active text-sidebar-text-active" : ""}`} onClick={()=>{
+                            toggleSidebar()
+                        }}>
                             <LayoutDashboard size={20} />
                             <Link href="/" className="self-center text-white ">Dashboard</Link>
                         </li>
 
-                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/inventory" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/inventory" ? "bg-sidebar-active text-sidebar-text-active" : ""}`} onClick={()=>{
+                            toggleSidebar()
+                        }}>
                             <Warehouse size={20}/>
                             <Link href="/inventory" className="self-center text-white">Inventory</Link>
                         </li>
 
-                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/product" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/product" ? "bg-sidebar-active text-sidebar-text-active" : ""}`} onClick={()=>{
+                            toggleSidebar()
+                        }}>
                             <Box size={20}/>
                             <Link href="/product" className="self-center text-white">Products</Link>
                         </li>
 
-                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/sales/create" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/sales/create" ? "bg-sidebar-active text-sidebar-text-active" : ""}`} onClick={()=>{
+                            toggleSidebar()
+                        }}>
                             <ShoppingCart size={20}/>
                             <Link href="/sales/create" className="self-center text-white">POS</Link>
                         </li>
 
-                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/sales" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                        <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/sales" ? "bg-sidebar-active text-sidebar-text-active" : ""}`} onClick={()=>{
+                            toggleSidebar()
+                        }}>
                             <ChartNoAxesCombined size={20}/>
                             <Link href="/sales" className="self-center text-white">Sales</Link>
                         </li>
@@ -73,7 +91,9 @@ export function Sidebar(){
 
 
                 <ul className="text-sm">
-                    <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/settings" ? "bg-sidebar-active text-sidebar-text-active" : ""}`}>
+                    <li className={`flex gap-2 px-3 py-2 rounded-md ${pathname === "/settings" ? "bg-sidebar-active text-sidebar-text-active" : ""}`} onClick={()=>{
+                        toggleSidebar()
+                    }}>
                         <Settings size={20}/>
                         <Link href="/settings" className="self-center text-white">Settings</Link>
                     </li>
@@ -81,6 +101,7 @@ export function Sidebar(){
                     <li className='flex gap-2 px-3 py-2 rounded-md' onClick={
                         ()=>{
                             setIsModalOpen((prev)=>!prev)
+                            toggleSidebar()
                         }
                     }>
                         <LogOutIcon size={20}/>

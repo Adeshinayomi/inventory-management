@@ -10,8 +10,11 @@ type UserProp = {
   phone: number;
   role: string;
 };
-
-export function Header() {
+type sidebarProp={
+  isOpen:boolean;
+  toggleSidebar:()=>void
+}
+export function Header({isOpen,toggleSidebar}:sidebarProp) {
   const [user, setUser] = useState<UserProp | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,7 +79,9 @@ export function Header() {
 
   return (
     <header className="flex w-full justify-between border border-border bg-surface px-5 py-4">
-      <div className="flex items-center md:hidden">
+      <div className="flex items-center md:hidden " onClick={()=>{
+        toggleSidebar()
+      }}>
         <MenuIcon size={25} />
       </div>
 
