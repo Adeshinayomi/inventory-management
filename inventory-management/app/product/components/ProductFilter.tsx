@@ -1,52 +1,90 @@
 "use client";
-import { useState,useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { SearchIcon } from "lucide-react";
 import { getCategories } from "@/lib/inventory";
-type Props = {
+
+type ProductFiltersProps = {
   search: string;
-  status: string;
+  category: string;
   onSearchChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onCategoryChange: (value: string) => void;
 };
 
 export function ProductFilters({
   search,
-  status,
+  category,
   onSearchChange,
-  onStatusChange,
-}: Props) {
-  const [category,setCategory]=useState<string[]>()
+  onCategoryChange,
+}: ProductFiltersProps) {
+  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryError, setCategoryError] = useState("");
 
-  useEffect(()=>{
-    getCategories().
-    then((data)=>{
-        setCategory(data.categories)
-    })
-  },[])
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchCategories() {
+      try {
+        const data = await getCategories();
+
+        if (!cancelled) {
+          setCategories(data.categories ?? []);
+          setCategoryError("");
+        }
+      } catch {
+        if (!cancelled) {
+          setCategoryError("Could not load categories.");
+        }
+      }
+    }
+
+    void fetchCategories();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
-    <div className="flex w-full items-center justify-between gap-4">
-      <div className="relative w-1/2">
-        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+    <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* Search */}
+      <div className="relative w-full sm:w-1/2">
+        <SearchIcon
+          size={18}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+        />
+
         <input
+          type="search"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Search Product..."
-          className="w-full rounded-full border border-border px-10 py-2"
+          placeholder="Search by product name or SKU..."
+          aria-label="Search products"
+          className="w-full rounded-full border border-border bg-background py-2 pl-10 pr-4 text-sm outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
         />
       </div>
 
-      <select
-        value={status}
-        onChange={(event) => onStatusChange(event.target.value)}
-        className="rounded-full border border-border px-4 py-2"
-      >
-        <option value="">Categories</option>
-        {category?.map((data,index)=>{
-            return(
-                <option key={index} value={data}>{data}</option>
-            )
-        })}
-      </select>
+      {/* Category filter */}
+      <div className="w-full sm:w-auto">
+        <select
+          value={category}
+          onChange={(event) => onCategoryChange(event.target.value)}
+          aria-label="Filter products by category"
+          className="w-full rounded-full border border-border bg-background px-4 py-2 text-sm outline-none focus:border-primary sm:min-w-44"
+        >
+          <option value="">All categories</option>
+
+          {categories.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+
+        {categoryError && (
+          <p className="mt-1 text-xs text-red-500">{categoryError}</p>
+        )}
+      </div>
     </div>
   );
 }

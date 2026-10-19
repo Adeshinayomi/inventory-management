@@ -1,89 +1,77 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductFilters } from "./components/ProductFilter";
 import { ProductHeader } from "./components/ProductHeader";
 import { ProductTable } from "./components/ProductTable";
 import { getInventoryProducts, type Product } from "@/lib/inventory";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function ProductPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+const searchParams = useSearchParams();
+const headerSearch = searchParams.get("search") ?? "";
 
-  const searchQuery = searchParams.get("search") ?? "";
+const [search, setSearch] = useState(headerSearch);
 
+useEffect(() => {
+  setSearch(headerSearch);
+}, [headerSearch]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("");
+  // const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch products whenever the URL search query changes.
-  useEffect(() => {
-    let cancelled = false;
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-    async function fetchProducts() {
-      try {
-        setLoading(true);
-        setError("");
+      const data = await getInventoryProducts();
+      setProducts(data.products);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to fetch products";
 
-        const data = await getInventoryProducts(searchQuery);
+      setError(message);
 
-        if (!cancelled) {
-          setProducts(data.products);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          const message =
-            err instanceof Error
-              ? err.message
-              : "Failed to fetch products";
-
-          setError(message);
-
-          // Redirect only when the request indicates an authentication failure.
-          if (
-            message.toLowerCase().includes("token") ||
-            message.toLowerCase().includes("unauthorized") ||
-            message.toLowerCase().includes("access denied")
-          ) {
-            router.replace("/login");
-          }
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+      if (
+        message.toLowerCase().includes("token") ||
+        message.toLowerCase().includes("unauthorized") ||
+        message.toLowerCase().includes("access denied")
+      ) {
+        router.replace("/login");
       }
+    } finally {
+      setLoading(false);
     }
+  }, [router]);
 
-    fetchProducts();
+  useEffect(() => {
+    void fetchProducts();
+  }, [fetchProducts]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [searchQuery, router]);
-
-  // Apply local search and category filtering to the fetched products.
   const filteredProducts = useMemo(() => {
     const query = search.trim().toLowerCase();
+    const selectedCategory = category.trim().toLowerCase();
 
     return products.filter((product) => {
+      const name = product.name?.toLowerCase() ?? "";
+      const sku = product.sku?.toLowerCase() ?? "";
+      const productCategory = product.category?.trim().toLowerCase() ?? "";
+
       const matchesSearch =
-        !query ||
-        product.name?.toLowerCase().includes(query) ||
-        product.sku?.toLowerCase().includes(query);
+        !query || name.includes(query) || sku.includes(query);
 
       const matchesCategory =
-        !status ||
-        status === "all" ||
-        product.category === status;
+        !selectedCategory || productCategory === selectedCategory;
 
       return matchesSearch && matchesCategory;
     });
-  }, [products, search, status]);
+  }, [products, search, category]);
 
   return (
     <section className="mt-8 grid gap-5 px-5">
@@ -92,46 +80,65 @@ export default function ProductPage() {
       <div className="grid w-full gap-5 rounded-md border border-border bg-surface p-4">
         <ProductFilters
           search={search}
-          status={status}
+          category={category}
           onSearchChange={setSearch}
-          onStatusChange={setStatus}
+          onCategoryChange={setCategory}
         />
 
         {error && (
-          <p className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-            {error}
-          </p>
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
+            <p>{error}</p>
+
+            <button
+              type="button"
+              onClick={() => void fetchProducts()}
+              className="mt-2 font-medium underline"
+            >
+              Try again
+            </button>
+          </div>
         )}
 
         {loading ? (
-          <p className="py-6 text-center text-text-secondary">
+          <p className="py-10 text-center text-sm text-muted-foreground">
             Loading products...
           </p>
-        ) : (
+        ) : !error ? (
           <>
             <ProductTable items={filteredProducts} />
 
-            <div className="flex justify-between text-text-secondary">
-              <p className="font-medium">
-                Showing {filteredProducts.length} products
+            <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-muted-foreground">
+                Showing {filteredProducts.length} of {products.length} products
               </p>
 
-              <div className="flex gap-2">
-                <button type="button" disabled aria-label="Previous page">
-                  <ChevronLeft />
+              {/* Pagination is not active yet. */}
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  disabled
+                  aria-label="Previous page"
+                  className="rounded-md border border-border p-2 opacity-50"
+                >
+                  <ChevronLeft size={18} />
                 </button>
 
-                <span className="rounded-md bg-primary px-2 text-surface">
+                <span className="rounded-md bg-primary px-3 py-2 text-sm text-white">
                   1
                 </span>
 
-                <button type="button" disabled aria-label="Next page">
-                  <ChevronRight />
+                <button
+                  type="button"
+                  disabled
+                  aria-label="Next page"
+                  className="rounded-md border border-border p-2 opacity-50"
+                >
+                  <ChevronRight size={18} />
                 </button>
               </div>
             </div>
           </>
-        )}
+        ) : null}
       </div>
     </section>
   );
