@@ -3,6 +3,9 @@ const app = express();
 const dotenv = require("dotenv");
 const cors = require("cors")
 dotenv.config();
+const dns = require("node:dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 const connectDB = require("./Config/DatabaseConfig");
 const userRoute = require("./Routes/UserRoute.js");
 const productRoute = require("./Routes/ProductRoute.js");
