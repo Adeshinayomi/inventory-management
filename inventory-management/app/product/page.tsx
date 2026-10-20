@@ -1,29 +1,28 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductFilters } from "./components/ProductFilter";
 import { ProductHeader } from "./components/ProductHeader";
 import { ProductTable } from "./components/ProductTable";
 import { getInventoryProducts, type Product } from "@/lib/inventory";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
 
-export default function ProductPage() {
+function ProductPageContent() {
   const router = useRouter();
-const searchParams = useSearchParams();
-const headerSearch = searchParams.get("search") ?? "";
+  const searchParams = useSearchParams();
+  const headerSearch = searchParams.get("search") ?? "";
 
-const [search, setSearch] = useState(headerSearch);
-
-useEffect(() => {
-  setSearch(headerSearch);
-}, [headerSearch]);
+  const [search, setSearch] = useState(headerSearch);
   const [products, setProducts] = useState<Product[]>([]);
-  // const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+
+  // Keep the product filter synchronized with the URL/header search.
+  useEffect(() => {
+    setSearch(headerSearch);
+  }, [headerSearch]);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -141,5 +140,21 @@ useEffect(() => {
         ) : null}
       </div>
     </section>
+  );
+}
+
+export default function ProductPage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="mt-8 px-5">
+          <p className="py-10 text-center text-sm text-muted-foreground">
+            Loading products...
+          </p>
+        </section>
+      }
+    >
+      <ProductPageContent />
+    </Suspense>
   );
 }
