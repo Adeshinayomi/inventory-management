@@ -21,63 +21,115 @@ exports.getLowStockProducts = async (req, res) => {
   }
 };
 
+const DashboardSnapshot = require("../Models/DashboardSnapshot.js");
+
+function calculateChange(current, previous) {
+  if (previous == null || previous <= 0) {
+    return {
+      percentageChange: 0,
+      change: "no_change",
+    };
+  }
+
+  const percentageChange =
+    Math.round(((current - previous) / previous) * 10000) / 100;
+
+  return {
+    percentageChange,
+    change:
+      percentageChange > 0
+        ? "increase"
+        : percentageChange < 0
+          ? "decrease"
+          : "no_change",
+  };
+}
+
 exports.getInventoryStats = async (req, res) => {
   try {
-    const storeId = req.storeId; 
-    const totalUnitsResult = await Inventory.aggregate([
-      { 
-        $match: { store: storeId } 
-      },
-      {
-        $group: {
-          _id: null,
-          totalUnits: { $sum: "$stock" },
+    const storeId = req.storeId;
+
+    if (!storeId) {
+      return res.status(400).json({
+        message: "Store ID is required",
+      });
+    }
+
+    const [totals, lowStocks, outOfStock] = await Promise.all([
+      Inventory.aggregate([
+        { $match: { store: storeId } },
+        {
+          $group: {
+            _id: null,
+            totalUnits: { $sum: "$stock" },
+            inventoryValue: {
+              $sum: { $multiply: ["$price", "$stock"] },
+            },
+          },
         },
-      },
+      ]),
+
+      Inventory.countDocuments({
+        store: storeId,
+        $expr: {
+          $lt: ["$stock", "$threshold"],
+        },
+      }),
+
+      Inventory.countDocuments({
+        store: storeId,
+        stock: 0,
+      }),
     ]);
 
-    const totalUnit = totalUnitsResult[0]?.totalUnits || 0;
+    const totalUnit = totals[0]?.totalUnits ?? 0;
+    const inventoryValue = totals[0]?.inventoryValue ?? 0;
 
-    const lowStocks = await Inventory.countDocuments({
-      $expr: {
-        $lt: ["$stock", "$threshold"],
+    // Compare against the snapshot from approximately 7 days ago.
+    const comparisonDate = new Date();
+    comparisonDate.setUTCHours(0, 0, 0, 0);
+    comparisonDate.setUTCDate(comparisonDate.getUTCDate() - 7);
+
+    const previousSnapshot = await DashboardSnapshot.findOne({
+      store: storeId,
+      snapshotDate: { $lte: comparisonDate },
+    }).sort({ snapshotDate: -1 });
+
+    const previousTotalUnit = previousSnapshot?.totalUnit;
+    const previousInventoryValue = previousSnapshot?.inventoryValue;
+    const previousLowStocks = previousSnapshot?.lowStocks;
+
+    return res.status(200).json({
+      totalUnit: {
+        value: totalUnit,
+        ...calculateChange(totalUnit, previousTotalUnit),
       },
-      store: storeId
-    });
 
-    const outOfStock = await Inventory.find({
-        stock:0,
-        store: storeId
-    })
-
-    const inventoryValueResult = await Inventory.aggregate([
-      {
-        $match: { store: storeId }
+      inventoryValue: {
+        value: inventoryValue,
+        ...calculateChange(inventoryValue, previousInventoryValue),
       },
-      {
-        $group: {
-          _id: null,
-          inventoryValue: { $sum: { $multiply: ["$price", "$stock"] } },
-        },
+
+      lowStocks: {
+        value: lowStocks,
+        ...calculateChange(lowStocks, previousLowStocks),
       },
-    ]);
 
-    const inventoryValue = inventoryValueResult[0]?.inventoryValue || 0;
+      outOfStock: {
+        value: outOfStock,
+        percentageChange: 0,
+        change: "no_change",
+      },
 
-    res.status(200).json({ 
-        totalUnit, 
-        inventoryValue,
-        lowStocks,
-        outOfStock
+      inventoryHistoryAvailable: Boolean(previousSnapshot),
+      comparisonPeriod: "previous_7_days",
     });
   } catch (error) {
     console.error("Inventory stats error:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error fetching inventory statistics",
-        error: error.message,
-      });
+
+    return res.status(500).json({
+      message: "Error fetching inventory statistics",
+    });
   }
 };
 

@@ -13,12 +13,21 @@ export type Product = {
   available: boolean;
 };
 
-export type InventoryStats ={
-  outOfStock:number,
-  totalUnit:number, 
-  lowStocks:number,
-  inventoryValue:number
-}
+export type StatValue = {
+  value: number;
+  percentageChange: number;
+  change: "increase" | "decrease" | "no_change";
+};
+
+export type InventoryStats = {
+  outOfStock: StatValue;
+  totalUnit: StatValue;
+  lowStocks: StatValue;
+  inventoryValue: StatValue;
+  inventoryHistoryAvailable: boolean;
+  comparisonPeriod: "previous_7_days";
+};
+
 export function getCategories() {
   return apiFetch<{categories:string[]}>("/products/categories");
 }
