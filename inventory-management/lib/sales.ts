@@ -18,11 +18,23 @@ export type Sales={
     },
     orderDate:string
 }
-export type OrderStats ={
-    totalSales: number;
-    itemsSold: number;
-    totalOrders: number;
-    averageOrderValue:number;
+
+export type StatValue = {
+  value: number;
+  percentageChange: number;
+  change: "increase" | "decrease" | "no_change";
+};
+
+export type OrderStats = {
+  totalSales: StatValue;
+  itemsSold: StatValue;
+  totalOrders: StatValue;
+  averageOrderValue: StatValue;
+  comparisonPeriod: "previous_7_days";
+};
+
+export function getOrdersStats() {
+  return apiFetch<OrderStats>("/orders/stats");
 }
 export function getTotalSales (){
     return apiFetch<{ orders: Sales[] }>('/orders/all-orders')

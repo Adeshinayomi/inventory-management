@@ -201,55 +201,132 @@ exports.getOrders = async (req, res) => {
 };
 
 
-exports.getOrdersStats =  async (req,res)=>{
-  try{
-    const totalSales = await Order.aggregate([
+function calculateChange(current, previous) {
+  if (previous == null || previous <= 0) {
+    return {
+      percentageChange: 0,
+      change: "no_change",
+    };
+  }
+
+  const percentageChange =
+    Math.round(((current - previous) / previous) * 10000) / 100;
+
+  return {
+    percentageChange,
+    change:
+      percentageChange > 0
+        ? "increase"
+        : percentageChange < 0
+          ? "decrease"
+          : "no_change",
+  };
+}
+
+async function getOrderMetrics(storeId, startDate, endDate) {
+  const [salesResult, totalOrders, itemsSoldResult] = await Promise.all([
+    Order.aggregate([
       {
         $match: {
-          store: req.storeId
-        }
+          store: storeId,
+          createdAt: { $gte: startDate, $lt: endDate },
+        },
       },
       {
         $group: {
           _id: null,
-          totalSales: {
-            $sum: "$totalAmount",
-          },
+          totalSales: { $sum: "$totalAmount" },
         },
       },
-    ]);
-    const totalOrders = await Order.find({ store: req.storeId }).countDocuments();
-    const itemsSold = await Order.aggregate([
+    ]),
+
+    Order.countDocuments({
+      store: storeId,
+      createdAt: { $gte: startDate, $lt: endDate },
+    }),
+
+    Order.aggregate([
       {
         $match: {
-          store: req.storeId
-        }
+          store: storeId,
+          createdAt: { $gte: startDate, $lt: endDate },
+        },
       },
+      { $unwind: "$items" },
       {
-        $unwind: "$items"
-      },
-      {
-        $group:{
+        $group: {
           _id: null,
-          total: {
-            $sum: "$items.quantity"
-          }
-        }
-      }
-    ])
+          total: { $sum: "$items.quantity" },
+        },
+      },
+    ]),
+  ]);
 
-    const averageOrderValue = totalOrders === 0 ? 0 : totalSales[0]?.totalSales / totalOrders;
+  const totalSales = salesResult[0]?.totalSales ?? 0;
+  const itemsSold = itemsSoldResult[0]?.total ?? 0;
+  const averageOrderValue =
+    totalOrders === 0 ? 0 : totalSales / totalOrders;
 
-    res.status(200).json({
-      totalSales:totalSales[0]?.totalSales || 0,
-      totalOrders,
-      itemsSold:itemsSold[0]?.total || 0,
-      averageOrderValue
-    })
-  }catch(error){
-    res.status(500).json({message:error.message})
-  }
+  return {
+    totalSales,
+    totalOrders,
+    itemsSold,
+    averageOrderValue,
+  };
 }
+
+exports.getOrdersStats = async (req, res) => {
+  try {
+    const storeId = req.storeId;
+
+    if (!storeId) {
+      return res.status(400).json({
+        message: "Store ID is required",
+      });
+    }
+
+    const now = new Date();
+    const currentStart = new Date(now);
+    currentStart.setDate(currentStart.getDate() - 7);
+
+    const previousStart = new Date(now);
+    previousStart.setDate(previousStart.getDate() - 14);
+
+    const [current, previous] = await Promise.all([
+      getOrderMetrics(storeId, currentStart, now),
+      getOrderMetrics(storeId, previousStart, currentStart),
+    ]);
+
+    return res.status(200).json({
+      totalSales: {
+        value: current.totalSales,
+        ...calculateChange(current.totalSales, previous.totalSales),
+      },
+      totalOrders: {
+        value: current.totalOrders,
+        ...calculateChange(current.totalOrders, previous.totalOrders),
+      },
+      itemsSold: {
+        value: current.itemsSold,
+        ...calculateChange(current.itemsSold, previous.itemsSold),
+      },
+      averageOrderValue: {
+        value: current.averageOrderValue,
+        ...calculateChange(
+          current.averageOrderValue,
+          previous.averageOrderValue
+        ),
+      },
+      comparisonPeriod: "previous_7_days",
+    });
+  } catch (error) {
+    console.error("Orders stats error:", error);
+
+    return res.status(500).json({
+      message: "Error fetching order statistics",
+    });
+  }
+};
 
 // Helper function for creating the date filter
 const getDateFilter = (startDate, endDate) => {

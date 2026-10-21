@@ -1,18 +1,21 @@
 import {
   Handbag,
   ArrowUp,
+  ArrowDown,
+  Minus,
   ShoppingCart,
   Boxes,
   CircleDollarSign,
   CircleAlert,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-
 
 type Props = {
   stat: string;
   value: number;
+  percentageChange: number;
+  change: "increase" | "decrease" | "no_change";
 };
 
 type StatConfig = {
@@ -26,43 +29,36 @@ const statConfig: Record<string, StatConfig> = {
     label: "Total Products",
     icon: Handbag,
   },
-  
   inventoryValue: {
     label: "Inventory Value",
     icon: CircleDollarSign,
     isCurrency: true,
   },
-
   totalUnit: {
     label: "Total Units",
     icon: Boxes,
   },
   outOfStock: {
-    label: "Out Of Stock",
+    label: "Out of Stock",
     icon: XCircle,
   },
-
   lowStocks: {
     label: "Low Stocks",
     icon: CircleAlert,
   },
-  
   totalSales: {
     label: "Total Sales",
     icon: CircleDollarSign,
     isCurrency: true,
   },
-
   totalOrders: {
     label: "Total Orders",
     icon: ShoppingCart,
   },
-
   itemsSold: {
     label: "Items Sold",
     icon: Boxes,
   },
-
   averageOrderValue: {
     label: "Average Order Value",
     icon: CircleDollarSign,
@@ -73,47 +69,58 @@ const statConfig: Record<string, StatConfig> = {
 export function StatsCard({
   stat,
   value,
+  percentageChange,
+  change,
 }: Props) {
   const config = statConfig[stat];
 
-  if (!config) {
-    return null;
-  }
+  if (!config) return null;
 
-  const {
-    label,
-    icon: Icon,
-    isCurrency,
-  } = config;
+  const { label, icon: Icon, isCurrency } = config;
 
+  const isIncrease = change === "increase";
+  const isDecrease = change === "decrease";
+
+  const TrendIcon = isIncrease
+    ? ArrowUp
+    : isDecrease
+      ? ArrowDown
+      : Minus;
+
+  const trendColor = isIncrease
+    ? "text-success"
+    : isDecrease
+      ? "text-destructive"
+      : "text-text-secondary";
+
+  const formattedValue = Number(value ?? 0).toLocaleString();
 
   return (
     <div className="min-w-[240px] rounded-md border border-border bg-surface px-4 py-3">
       {/* Header */}
-      <div className="flex md:flex-row md:items-center gap-3 flex-col items-start">
+      <div className="flex flex-col items-start gap-3 md:flex-row md:items-center">
         <div className="rounded-md bg-success-light p-2">
-          <Icon
-            size={20}
-            className="text-primary"
-          />
+          <Icon size={20} className="text-primary" />
         </div>
 
-        <h2 className="font-medium">
-          {label}
-        </h2>
+        <h2 className="font-medium">{label}</h2>
       </div>
 
       {/* Value */}
       <h2 className="mt-5 text-2xl font-bold">
         {isCurrency && "₦"}
-        {Number(value).toLocaleString()}
+        {formattedValue}
       </h2>
 
-      <div className="w-full justify-between mt-5 flex items-center gap-2 text-sm text-primary md:justify-start">
-        <div className="flex gap-2">
-          <ArrowUp size={18} />
-          <span>25.5%</span>
+      {/* Percentage change */}
+      <div
+        className={`mt-5 flex w-full items-center gap-2 text-sm ${trendColor}`}
+      >
+        <div className="flex items-center gap-1">
+          <TrendIcon size={18} />
+          <span>{Math.abs(percentageChange ?? 0).toFixed(2)}%</span>
         </div>
+
         <span className="text-text-secondary">vs last week</span>
       </div>
     </div>
