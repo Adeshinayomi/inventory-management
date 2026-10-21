@@ -5,7 +5,7 @@ const authorize= require("../Middleware/role.js").authorize;
 const storeMiddleware = require("../Middleware/validatestore.js");
 
 route.get("/stats", authenticateToken,authorize(['owner','admin']), storeMiddleware, DashboardController.getDashboardStats);
-route.get(
+route.post(
   "/cron/dashboard-snapshot",
   DashboardController.createDailyDashboardSnapshots
 );
