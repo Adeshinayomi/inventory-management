@@ -201,8 +201,8 @@ exports.getOrders = async (req, res) => {
 };
 
 
-function calculateChange(current, previous) {
-  if (previous == null || previous <= 0) {
+const calculateChange = (current, previous) => {
+  if (previous <= 0) {
     return {
       percentageChange: 0,
       change: "no_change",
@@ -210,10 +210,10 @@ function calculateChange(current, previous) {
   }
 
   const percentageChange =
-    Math.round(((current - previous) / previous) * 10000) / 100;
+    ((current - previous) / previous) * 100;
 
   return {
-    percentageChange,
+    percentageChange: Math.round(percentageChange * 100) / 100,
     change:
       percentageChange > 0
         ? "increase"
@@ -221,7 +221,7 @@ function calculateChange(current, previous) {
           ? "decrease"
           : "no_change",
   };
-}
+};
 
 async function getOrderMetrics(storeId, startDate, endDate) {
   const [salesResult, totalOrders, itemsSoldResult] = await Promise.all([

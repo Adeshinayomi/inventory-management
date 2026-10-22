@@ -12,7 +12,7 @@ route.get("/", authenticateToken, authorize(["owner","storekeeper"]), storeMiddl
 
 route.get("/get-order/:orderId",authenticateToken,authorize(["owner","storekeeper"]),storeMiddleware,OrderController.getOrderById)
 
-route.get("/stats",authenticateToken,authorize(["owner","storekeeper"]),storeMiddleware,OrderController.getSalesStats)
+route.get("/stats",authenticateToken,authorize(["owner","storekeeper"]),storeMiddleware,OrderController.getOrdersStats)
 
 route.get("/top-selling-category",authenticateToken,authorize(["owner","storekeeper"]),storeMiddleware,OrderController.getTopSellingCategories)
 

@@ -88,9 +88,9 @@ export function StatsCard({
       : Minus;
 
   const trendColor = isIncrease
-    ? "text-success"
+    ? "text-primary"
     : isDecrease
-      ? "text-destructive"
+      ? "text-red-500"
       : "text-text-secondary";
 
   const formattedValue = Number(value ?? 0).toLocaleString();
@@ -116,7 +116,7 @@ export function StatsCard({
       <div
         className={`mt-5 flex w-full items-center gap-2 text-sm ${trendColor}`}
       >
-        <div className="flex items-center gap-1">
+        <div className={`flex items-center gap-1 ${trendColor}`}>
           <TrendIcon size={18} />
           <span>{Math.abs(percentageChange ?? 0).toFixed(2)}%</span>
         </div>
