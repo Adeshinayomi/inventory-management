@@ -101,7 +101,7 @@ function SalesTableRow({
         </td>
 
         <td className="px-2 py-3 text-center text-sm">
-          {item.soldBy?.name ?? "Unknown"}
+          {item.soldBy.email || item.soldBy.firstName || "Unknown"}
         </td>
 
         <td className="px-2 py-3 text-center text-sm">
@@ -180,7 +180,7 @@ function SalesMobileCard({
           </p>
 
           <p className="mt-1 break-words text-xs text-muted-foreground">
-            Sold by: {item.soldBy?.name ?? "Unknown"}
+            Sold by: {item.soldBy?.email ?? "Unknown"}
           </p>
         </div>
 

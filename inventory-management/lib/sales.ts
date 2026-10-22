@@ -56,7 +56,7 @@ export type Order = {
     paymentMethod:string,
     soldBy: {
         _id:string,
-        name:string,
+        firstName:string,
         email:string
     },
     orderDate:string

@@ -200,9 +200,24 @@ exports.getOrders = async (req, res) => {
   }
 };
 
-
 const calculateChange = (current, previous) => {
-  if (previous <= 0) {
+  const currentValue = Number(current);
+  const previousValue = Number(previous);
+
+  if (
+    !Number.isFinite(currentValue) ||
+    !Number.isFinite(previousValue) ||
+    currentValue < 0 ||
+    previousValue < 0
+  ) {
+    return {
+      percentageChange: 0,
+      change: "no_change",
+    };
+  }
+
+  // No meaningful percentage baseline exists.
+  if (previousValue === 0) {
     return {
       percentageChange: 0,
       change: "no_change",
@@ -210,7 +225,7 @@ const calculateChange = (current, previous) => {
   }
 
   const percentageChange =
-    ((current - previous) / previous) * 100;
+    ((currentValue - previousValue) / previousValue) * 100;
 
   return {
     percentageChange: Math.round(percentageChange * 100) / 100,
